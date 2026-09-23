@@ -1,0 +1,5 @@
+country,variant,users,rpu_eur,cvr
+DE,control,1678,28.8122,0.5667
+DE,treatment,1643,34.4697,0.5776
+IT,control,1253,25.9857,0.5579
+IT,treatment,1165,27.9418,0.5193

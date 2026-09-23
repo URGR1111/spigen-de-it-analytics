@@ -1,0 +1,5 @@
+.venv/
+__pycache__/
+data/
+data_test/
+# events.csv는 100MB를 넘어 GitHub에 올릴 수 없다. run_pipeline.py로 재생성한다.

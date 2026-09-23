@@ -1,0 +1,10 @@
+﻿table,column,n,median,q1,q3,max,iqr_upper,n_iqr_outliers,pct_iqr,n_robust_z_outliers,skew
+orders,net_amount_eur,55288,33.28,21.99,48.98,303.23,89.465,3665,6.63,2444,2.248
+orders,gross_amount_eur,55288,34.98,21.99,49.98,336.93,91.965,3541,6.4,2554,2.215
+orders,discount_amount_eur,55288,0.0,0.0,1.7,56.24,4.25,4761,8.61,0,3.908
+orders,items_count,55288,2.0,1.0,2.0,10.0,3.5,3086,5.58,12,1.52
+order_items,unit_price_eur,96106,19.99,16.99,26.99,59.99,41.99,4631,4.82,2470,1.854
+customers,frequency,29982,1.0,1.0,2.0,24.0,3.5,3195,10.66,0,3.965
+customers,monetary,29982,36.98,23.99,66.97,1780.45,131.44,3568,11.9,3769,5.358
+customers,sessions_total,30000,5.0,2.0,14.0,228.0,32.0,3164,10.55,5247,3.915
+marketing_spend,spend_eur,5840,31.535,16.127,71.55,138.09,154.684,0,0.0,7,0.69

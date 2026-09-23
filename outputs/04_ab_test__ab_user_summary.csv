@@ -1,0 +1,3 @@
+variant,users,converters,cvr,orders,revenue_eur,rpu_eur,rpu_var,bundle_attach_rate,return_rate
+control,2931,1650,0.56295,1897,80906.98,27.6039,1861.4116,0.0,0.038
+treatment,2808,1554,0.55342,1810,89185.91,31.7614,1964.3717,0.2978,0.0431

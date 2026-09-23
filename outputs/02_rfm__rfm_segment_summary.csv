@@ -1,0 +1,9 @@
+rfm_segment,customers,customer_share_pct,revenue_eur,revenue_share_pct,avg_recency_days,avg_frequency,avg_monetary_eur
+1_Champions,2269,7.6,833265.0,38.2,78.0,6.92,367.2
+2_Loyal,1811,6.0,277194.0,12.7,172.0,3.71,153.1
+3_Potential Loyalist,1845,6.2,134557.0,6.2,98.0,2.0,72.9
+4_New Customers,6911,23.1,216092.0,9.9,96.0,1.0,31.3
+5_At Risk,987,3.3,159511.0,7.3,466.0,3.87,161.6
+6_Need Attention,5154,17.2,179478.0,8.2,272.0,1.16,34.8
+7_Hibernating,1473,4.9,97569.0,4.5,501.0,2.0,66.2
+8_Lost,9532,31.8,281237.0,12.9,535.0,1.0,29.5

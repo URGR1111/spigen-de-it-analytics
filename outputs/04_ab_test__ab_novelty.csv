@@ -1,0 +1,5 @@
+variant,since_exposure,orders,bundle_attach_rate,aov_eur
+control,d0-6,1505,0.0,38.91
+control,d7+,392,0.0,57.01
+treatment,d0-6,1431,0.3305,46.86
+treatment,d7+,379,0.1741,58.39

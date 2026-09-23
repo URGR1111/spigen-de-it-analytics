@@ -1,0 +1,11 @@
+# 데이터 생성·SQL 파이프라인 (run_pipeline.py)
+numpy>=2.0
+pandas>=2.2
+faker>=30.0
+# 분석·시각화 (analysis/*.py)
+matplotlib>=3.9
+prophet>=1.1
+openpyxl>=3.1          # 엑셀 내보내기
+scikit-learn>=1.5      # K-Means (없으면 numpy 구현으로 자동 대체)
+# MySQL 쿼리 검증 (src/test_mysql_queries.py)
+sqlglot>=25

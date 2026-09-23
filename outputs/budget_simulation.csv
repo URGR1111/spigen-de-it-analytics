@@ -1,0 +1,7 @@
+country,elasticity_b,weekly_budget_total_eur,uplift_unconstrained_pct,uplift_capped_pct
+DE,0.3,86727.0,0.73,0.71
+DE,0.5,86727.0,1.61,1.44
+DE,0.7,86727.0,3.65,2.6
+IT,0.3,48149.0,1.02,0.95
+IT,0.5,48149.0,2.36,1.96
+IT,0.7,48149.0,5.58,3.58

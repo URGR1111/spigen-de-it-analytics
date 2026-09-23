@@ -1,0 +1,9 @@
+traffic_source,sessions,product_view_pct,add_to_cart_pct,checkout_pct,session_cvr_pct
+email,102560,83.3,25.3,13.9,7.17
+direct,91304,83.4,25.5,14.0,6.95
+organic,83830,84.8,31.5,21.1,14.69
+meta_ads,67447,85.3,34.6,24.7,18.69
+google_search,51044,85.5,35.4,25.8,19.64
+referral,2624,100.0,100.0,100.0,99.89
+tiktok_ads,2114,100.0,100.0,100.0,99.95
+influencer,1910,100.0,100.0,100.0,99.95

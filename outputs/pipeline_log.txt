@@ -1,0 +1,138 @@
+[1/3] 데이터 생성
+  users           30,000
+  products               574 rows
+  users               30,000 rows
+  orders              55,288 rows
+  order_items         96,106 rows
+  sessions           402,833 rows
+  events           1,885,050 rows
+  ab_assignments       5,739 rows
+  marketing_spend      5,840 rows
+  dim_calendar         1,460 rows
+  done in 26.4s → C:\Users\AFFINITY9\Desktop\자소서\spigen-synthetic-data\data\raw
+[2/3] SQLite 적재
+  loaded products               574
+  loaded users               30,000
+  loaded orders              55,288
+  loaded order_items         96,106
+  loaded sessions           402,833
+  loaded events           1,885,050
+  loaded ab_assignments       5,739
+  loaded marketing_spend      5,840
+  loaded dim_calendar         1,460
+  sqlite ready in 13.4s → C:\Users\AFFINITY9\Desktop\자소서\spigen-synthetic-data\data\spigen_synth.db
+[3/3] 분석
+  01_data_quality__row_counts                               8 rows
+  01_data_quality__integrity_checks                         1 rows
+  01_data_quality__monthly_kpi                             48 rows
+  01_data_quality__funnel_by_source                         8 rows
+  02_rfm__rfm_segment_summary                               8 rows
+  02_rfm__rfm_by_channel                                    6 rows
+  02_rfm__pareto_top_customers                              1 rows
+  02_rfm__validation_rfm_vs_truth                           8 rows
+  03_cohort_retention__purchase_retention_matrix          234 rows
+  03_cohort_retention__visit_retention_matrix             234 rows
+  03_cohort_retention__retention_by_channel                 6 rows
+  03_cohort_retention__churn_status_by_channel              6 rows
+  04_ab_test__srm_check                                     2 rows
+  04_ab_test__ab_user_summary                               2 rows
+  04_ab_test__ab_order_summary                              2 rows
+  04_ab_test__ab_by_country                                 4 rows
+  04_ab_test__ab_novelty                                    4 rows
+  04_ab_test__ab_user_level                              5739 rows
+  05_seasonality_budget__weekly_efficiency                208 rows
+  05_seasonality_budget__efficiency_by_demand_quintile     10 rows
+  05_seasonality_budget__top8_weeks_gap                     2 rows
+# 분석 결과 요약 (합성 데이터)
+
+> 이 결과는 `config/taxonomy.py`의 가정으로 생성한 **합성 데이터**의 분석 결과입니다. 실제 기업 데이터가 아닙니다.
+
+## 1. 데이터 품질
+
+| orphan_items | orphan_orders | amount_mismatch | item_sum_mismatch | order_before_signup | purchase_without_order | order_without_event |
+|---|---|---|---|---|---|---|
+| 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+
+## 2. RFM 세그먼트
+
+| rfm_segment | customers | customer_share_pct | revenue_eur | revenue_share_pct | avg_recency_days | avg_frequency | avg_monetary_eur |
+|---|---|---|---|---|---|---|---|
+| 1_Champions | 2,269 | 7.6 | 833,265.0 | 38.2 | 78.0 | 6.9 | 367.2 |
+| 2_Loyal | 1,811 | 6.0 | 277,194.0 | 12.7 | 172.0 | 3.7 | 153.1 |
+| 3_Potential Loyalist | 1,845 | 6.2 | 134,557.0 | 6.2 | 98.0 | 2.0 | 72.9 |
+| 4_New Customers | 6,911 | 23.1 | 216,092.0 | 9.9 | 96.0 | 1.0 | 31.3 |
+| 5_At Risk | 987 | 3.3 | 159,511.0 | 7.3 | 466.0 | 3.9 | 161.6 |
+| 6_Need Attention | 5,154 | 17.2 | 179,478.0 | 8.2 | 272.0 | 1.2 | 34.8 |
+| 7_Hibernating | 1,473 | 4.9 | 97,569.0 | 4.5 | 501.0 | 2.0 | 66.2 |
+| 8_Lost | 9,532 | 31.8 | 281,237.0 | 12.9 | 535.0 | 1.0 | 29.5 |
+
+| top5pct_revenue_share | top20pct_revenue_share |
+|---|---|
+| 36.0 | 64.0 |
+
+- 검증: 숨은 VIP의 **66%**가 RFM Champions·Loyal로 분류됨, Champions·Loyal 중 실제 VIP·충성 고객 비율 **70%**
+
+## 3. 리텐션 (채널별 누적 재구매율)
+
+| acquisition_channel | customers | repeat_by_m1_pct | repeat_by_m3_pct | repeat_by_m6_pct |
+|---|---|---|---|---|
+| referral | 1,946 | 19.2 | 33.4 | 40.8 |
+| organic | 5,454 | 18.2 | 30.6 | 37.5 |
+| google_search | 5,284 | 16.6 | 27.6 | 34.3 |
+| influencer | 1,413 | 13.1 | 22.9 | 27.7 |
+| meta_ads | 6,760 | 14.2 | 22.6 | 27.5 |
+| tiktok_ads | 1,583 | 10.4 | 16.7 | 19.4 |
+
+## 4. A/B 테스트: 장바구니 번들 업셀 (케이스+강화유리 15% 할인 제안)
+
+| metric | control | treatment | rel_lift | ci_low | ci_high | p_value |
+|---|---|---|---|---|---|---|
+| SRM (배정 비율) | 2,931.0000 | 2,808.0000 | nan | nan | nan | 0.1045 |
+| 구매전환율 (CVR) | 0.5629 | 0.5534 | -0.0169 | -0.0352 | 0.0162 | 0.4674 |
+| 사용자당 매출 (RPU, 주요 지표) | 27.6039 | 31.7614 | 0.1506 | 1.8932 | 6.4218 | 0.0003 |
+| 객단가 (AOV) | 42.6500 | 49.2740 | 0.1553 | 4.6305 | 8.6175 | 0.0000 |
+| 번들 수락률 | 0.0000 | 0.2978 | nan | 0.2767 | 0.3189 | 0.0000 |
+| 반품률 (가드레일) | 0.0380 | 0.0431 | 0.1354 | -0.0076 | 0.0178 | 0.4273 |
+
+| variant | since_exposure | orders | bundle_attach_rate | aov_eur |
+|---|---|---|---|---|
+| control | d0-6 | 1,505 | 0.000 | 38.910 |
+| control | d7+ | 392 | 0.000 | 57.010 |
+| treatment | d0-6 | 1,431 | 0.331 | 46.860 |
+| treatment | d7+ | 379 | 0.174 | 58.390 |
+
+- 실제 설정값: 구매 손실 3%, 번들 수락률 첫 7일 34% → 이후 22%, 번들 반품률 ×1.35
+
+## 5. 주제 1: 수요 캘린더 기반 예산 배분
+
+| country | top8_demand_share_pct | top8_spend_share_pct | top8_acquisition_share_pct |
+|---|---|---|---|
+| DE | 20.2 | 14.8 | 20.7 |
+| IT | 21.2 | 14.9 | 20.0 |
+
+| country | demand_q | avg_demand_index | spend_share_pct | acquisition_share_pct | cac_eur | first_order_roas |
+|---|---|---|---|---|---|---|
+| DE | 1 | 0.86 | 21.20 | 17.40 | 17.15 | 2.03 |
+| DE | 2 | 0.91 | 19.60 | 18.40 | 15.01 | 2.27 |
+| DE | 3 | 0.95 | 20.20 | 19.10 | 14.87 | 2.29 |
+| DE | 4 | 1.03 | 19.90 | 20.50 | 13.66 | 2.50 |
+| DE | 5 | 1.26 | 19.10 | 24.60 | 10.89 | 3.05 |
+| IT | 1 | 0.76 | 20.10 | 14.40 | 15.42 | 2.17 |
+| IT | 2 | 0.87 | 20.70 | 17.70 | 12.95 | 2.63 |
+| IT | 3 | 0.96 | 19.80 | 20.70 | 10.58 | 3.14 |
+| IT | 4 | 1.08 | 20.10 | 21.90 | 10.17 | 3.29 |
+| IT | 5 | 1.35 | 19.30 | 25.20 | 8.47 | 3.83 |
+
+예산 재배분 시뮬레이션 (총예산 동일, 반응곡선 탄력성 b는 가정):
+
+| country | elasticity_b | weekly_budget_total_eur | uplift_unconstrained_pct | uplift_capped_pct |
+|---|---|---|---|---|
+| DE | 0.30 | 86,727.00 | 0.73 | 0.71 |
+| DE | 0.50 | 86,727.00 | 1.61 | 1.44 |
+| DE | 0.70 | 86,727.00 | 3.65 | 2.60 |
+| IT | 0.30 | 48,149.00 | 1.02 | 0.95 |
+| IT | 0.50 | 48,149.00 | 2.36 | 1.96 |
+| IT | 0.70 | 48,149.00 | 5.58 | 3.58 |
+
+
+완료 (47s). 결과: outputs/summary.md

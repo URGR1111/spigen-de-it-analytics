@@ -1,0 +1,7 @@
+﻿table,column,n_missing,pct_missing,type,meaning
+orders,promo_code,40850,73.89,구조적 결측(의미 있음),할인코드 미사용
+orders,returned_ts,52983,95.83,구조적 결측(의미 있음),반품되지 않은 주문
+orders,ab_variant,51581,93.3,구조적 결측(의미 있음),A/B 실험 대상이 아닌 주문
+sessions,exp_variant,381313,94.66,구조적 결측(의미 있음),A/B 실험 대상이 아닌 세션
+events,product_id,942165,49.98,구조적 결측(의미 있음),상품과 무관한 이벤트(세션 시작·결제 등)
+events,order_id,1829762,97.07,구조적 결측(의미 있음),구매가 아닌 이벤트
