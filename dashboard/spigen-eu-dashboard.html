@@ -1,0 +1,396 @@
+<title>Spigen EU Insight</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+:root{
+  --bg:#0b1322; --surface:#131f38; --surface-alt:#18274a;
+  --border:rgba(255,255,255,.07); --border-sub:rgba(255,255,255,.05);
+  --ink:#eef2f8; --ink-sub:#c3cbdc; --ink-dim:#8b96ab; --ink-muted:#5c6b85;
+  --de:#4fd1c5; --it:#e0b15c; --synth:#e0b15c;
+  --good:#4fd1c5; --warn:#e0b15c; --crit:#e0575c;
+  --good-bg:rgba(79,209,197,.14); --warn-bg:rgba(224,177,92,.14); --crit-bg:rgba(224,87,92,.14); --synth-bg:rgba(224,177,92,.14);
+  --hover:#182544;
+  --radius:14px;
+  --sans:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);display:flex;height:100svh;overflow:hidden;font-size:14px}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+a{color:inherit}
+
+/* ---- sidebar ---- */
+#sidebar{width:210px;min-width:210px;background:var(--bg);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto}
+.sb-logo{padding:20px 20px 14px;border-bottom:1px solid var(--border-sub);display:flex;align-items:center;gap:10px}
+.sb-logo .mark{width:30px;height:30px;border-radius:8px;background:var(--ink);color:var(--bg);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex:none}
+.sb-logo .word{font-weight:700;font-size:14.5px}
+.sb-logo .sub{font-size:10px;color:var(--ink-muted);text-transform:uppercase;letter-spacing:.05em;margin-top:1px}
+.sb-filters{padding:16px 16px 8px;border-bottom:1px solid var(--border-sub)}
+.sb-filter-label{font-size:11px;color:var(--ink-dim);font-weight:600;letter-spacing:.05em;margin-bottom:5px;text-transform:uppercase}
+.sb-select{width:100%;border:1px solid var(--border);padding:5px 8px;font-size:12px;color:var(--ink-sub);background:var(--surface);margin-bottom:4px;cursor:pointer;font-family:inherit;appearance:none;background-repeat:no-repeat;background-position:right 8px center;padding-right:22px}
+.sb-nav{padding:12px 0;flex:1}
+.sb-nav-item{display:flex;align-items:center;gap:8px;padding:9px 20px;font-size:13px;color:var(--ink-dim);cursor:pointer;user-select:none}
+.sb-nav-item:hover{background:var(--hover);color:var(--ink)}
+.sb-nav-item.active{color:var(--good);font-weight:600;background:var(--hover)}
+.sb-nav-dot{width:6px;height:6px;border-radius:50%;background:var(--border);flex-shrink:0}
+.sb-nav-item.active .sb-nav-dot{background:var(--good)}
+.sb-footer{padding:10px 20px 14px;font-size:11px;color:var(--ink-muted);border-top:1px solid var(--border-sub);line-height:1.6}
+.sb-footer .sw{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px}
+
+/* ---- main ---- */
+#main{flex:1;overflow-y:auto;background:var(--bg)}
+.page-header{background:var(--bg);border-bottom:1px solid var(--border);padding:22px 30px 16px}
+.page-header-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.page-title{font-size:23px;font-weight:700;letter-spacing:-.015em}
+.page-subtitle{font-size:12px;color:var(--ink-dim);margin-top:4px}
+.page-refresh{font-size:11px;color:var(--ink-muted);white-space:nowrap}
+.page-body{padding:20px 30px 48px}
+
+/* ---- kpi row ---- */
+.kpi-row{display:flex;background:transparent;border:none;gap:14px;margin-bottom:18px;flex-wrap:wrap}
+.kpi-card{flex:1;min-width:150px;padding:18px 20px;background:var(--surface);border-radius:var(--radius)}
+.kpi-main{background:var(--surface);flex:1.5;min-width:200px;padding:18px 22px;border-radius:var(--radius)}
+.kpi-label{font-size:12.5px;color:var(--ink-dim)}
+.kpi-main .kpi-label{font-size:13px;font-weight:600;color:var(--ink-sub)}
+.kpi-value{font-size:27px;font-weight:700;letter-spacing:-.02em;margin-top:6px}
+.kpi-main .kpi-value{font-size:31px}
+.kpi-delta{font-size:12.5px;margin-top:5px;display:flex;align-items:center;gap:4px;font-weight:600}
+.kpi-delta.good{color:var(--good)} .kpi-delta.warn{color:var(--warn)} .kpi-delta.crit{color:var(--crit)}
+.kpi-sub{font-size:11px;color:var(--ink-muted);margin-top:4px}
+.kpi-tag{display:inline-block;font-size:9.5px;font-weight:700;padding:1px 6px;border-radius:999px;margin-left:6px;vertical-align:2px}
+.kpi-tag.real{background:var(--good-bg);color:var(--good)}
+.kpi-tag.synth{background:var(--synth-bg);color:var(--synth)}
+
+/* ---- chart card ---- */
+.chart-card{background:var(--surface);border:none;border-radius:var(--radius);padding:20px 22px;overflow:hidden}
+.chart-title{font-size:15px;font-weight:600;margin-bottom:3px}
+.chart-subtitle{font-size:11.5px;color:var(--ink-muted);margin-bottom:10px}
+.chart-insight{font-size:11.5px;color:var(--ink-sub);background:var(--hover);border-left:2px solid var(--good);padding:7px 10px;margin:2px 0 12px;border-radius:0 6px 6px 0;line-height:1.55}
+.chart-grid{display:grid;gap:14px;margin-bottom:18px}
+.chart-grid.col-2{grid-template-columns:1fr 1fr}
+.chart-grid.col-3{grid-template-columns:1fr 1fr 1fr}
+.chart{position:relative;width:100%}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.chart text{font-size:9.5px;fill:var(--ink-muted)}
+.chart .gridl{stroke:var(--border-sub);stroke-width:1}
+.chart .base{stroke:var(--border);stroke-width:1}
+.chart .mark-band{fill:var(--ink);opacity:.05}
+.legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;font-size:11px;color:var(--ink-sub)}
+.legend-item{display:flex;align-items:center;gap:5px}
+.legend-dot{width:8px;height:8px;flex-shrink:0;border-radius:2px}
+
+/* ---- section divider ---- */
+.section-divider{display:flex;align-items:center;gap:14px;margin:22px 0 15px}
+.section-divider::before,.section-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.section-divider-text{font-size:13px;font-weight:700;color:var(--ink-sub);white-space:nowrap}
+
+/* ---- trend / cause cards ---- */
+.trend-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px}
+.trend-card{background:var(--surface);border:none;border-radius:var(--radius);padding:17px 19px}
+.trend-card .k{font-family:var(--mono);font-size:10.5px;color:var(--good);font-weight:600}
+.trend-card h4{font-size:14.5px;font-weight:700;margin:5px 0 8px}
+.trend-card p{margin:0;font-size:12px;color:var(--ink-sub);line-height:1.6}
+.trend-card p+p{margin-top:6px}
+
+/* ---- table ---- */
+.data-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:4px}
+.data-table th{background:var(--surface-alt);color:var(--ink-dim);font-weight:600;text-align:left;padding:9px 12px;border-bottom:1px solid var(--border);font-size:10.5px;letter-spacing:.04em;text-transform:uppercase}
+.data-table td{padding:10px 12px;border-bottom:1px solid var(--border-sub);color:var(--ink-sub);vertical-align:top}
+.data-table tr:last-child td{border-bottom:none}
+.data-table tr:hover td{background:var(--hover)}
+.pri{display:inline-block;padding:2px 8px;font-size:10.5px;font-weight:600;border-radius:999px}
+.pri.high{background:var(--crit-bg);color:var(--crit)} .pri.mid{background:var(--warn-bg);color:var(--warn)}
+
+#tip{position:fixed;pointer-events:none;background:#eef2f8;color:#0b1322;font-size:11.5px;line-height:1.5;padding:7px 9px;border-radius:7px;z-index:50;max-width:230px;opacity:0;transition:opacity .08s;font-weight:500}
+#tip .t{font-family:var(--mono);font-size:10.5px;opacity:.75;margin-bottom:2px}
+
+@media (max-width:900px){
+  .chart-grid.col-2,.chart-grid.col-3,.trend-grid{grid-template-columns:1fr}
+}
+@media (max-width:760px){
+  body{display:block;height:auto;overflow:visible}
+  #sidebar{width:100%;min-width:0;height:auto;border-right:0;border-bottom:1px solid var(--border)}
+  #main{overflow:visible}
+}
+</style>
+
+<div id="sidebar">
+  <div class="sb-logo"><div class="mark">S</div><div><div class="word">Spigen</div><div class="sub">EU Insight</div></div></div>
+  <div class="sb-filters">
+    <div class="sb-filter-label">시장</div>
+    <select class="sb-select" id="filter-market" onchange="setMarketFilter(this.value)">
+      <option value="all">전체 (독일+이탈리아)</option>
+      <option value="DE">독일만</option>
+      <option value="IT">이탈리아만</option>
+    </select>
+  </div>
+  <nav class="sb-nav" id="sb-nav">
+    <div class="sb-nav-item active" data-tab="market" onclick="navigate('market')"><span class="sb-nav-dot"></span>① 시장 조사</div>
+    <div class="sb-nav-item" data-tab="cause" onclick="navigate('cause')"><span class="sb-nav-dot"></span>② 원인 분석</div>
+    <div class="sb-nav-item" data-tab="sim" onclick="navigate('sim')"><span class="sb-nav-dot"></span>③ 시뮬레이션</div>
+  </nav>
+  <div class="sb-footer">
+    <span class="sw" style="background:var(--good)"></span>실측: Statcounter·Trends<br>
+    <span class="sw" style="background:var(--synth)"></span>합성: spigen-synthetic-data<br>
+    기준일 2026-09-23
+  </div>
+</div>
+
+<main id="main"><div id="page-content"></div></main>
+<div id="tip" role="tooltip"></div>
+
+<script>
+(function(){
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const tip=document.getElementById('tip');
+function showTip(html,x,y){tip.innerHTML=html;tip.style.opacity=1;const r=tip.getBoundingClientRect();let L=x+14,T=y+14;if(L+r.width>innerWidth-8)L=x-r.width-14;if(T+r.height>innerHeight-8)T=y-r.height-14;tip.style.left=Math.max(8,L)+'px';tip.style.top=Math.max(8,T)+'px';}
+function hideTip(){tip.style.opacity=0}
+const NS='http://www.w3.org/2000/svg';
+function sv(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+function ci(html){return '<div class="chart-insight">'+html+'</div>';}
+
+let market='all'; let tab='market';
+function setMarketFilter(v){ market=v; renderPage(); }
+function navigate(t){ tab=t; document.querySelectorAll('.sb-nav-item').forEach(el=>el.classList.toggle('active',el.dataset.tab===t)); renderPage(); }
+function dim(m){ return (market!=='all' && market!==m) ? .22 : 1; }
+
+/* ============ shared chart primitives ============ */
+function hbars(el,{cats,series,max,unit,dec,dimBySeries}){
+  el.innerHTML='';
+  const Wd=560,rowH=series.length>1?24:20,gap=6,H=cats.length*(rowH*series.length+gap)+6,m={l:96,r:56,t:2,b:2};
+  const svg=sv('svg',{viewBox:`0 0 ${Wd} ${H}`,role:'img'},el);
+  let y0=m.t;
+  cats.forEach((c)=>{
+    const lab=sv('text',{x:m.l-8,y:y0+ (series.length*rowH)/2 +4,'text-anchor':'end'},svg);lab.textContent=c;
+    series.forEach((s,si)=>{
+      const v=s.values[cats.indexOf(c)];
+      const w=(v/max)*(Wd-m.l-m.r);
+      const yy=y0+si*rowH;
+      const rect=sv('rect',{x:m.l,y:yy,width:Math.max(2,w),height:rowH-6,rx:2,fill:s.color,opacity:dimBySeries?dim(s.key):1},svg);
+      const t=sv('text',{x:m.l+w+6,y:yy+(rowH-6)/2+3.5,style:'fill:'+css('--ink-sub')},svg);t.textContent=(dec!=null?v.toFixed(dec):v)+(unit||'');
+      rect.addEventListener('mousemove',e=>showTip('<div class="t">'+c+'</div>'+s.name+' <b>'+(dec!=null?v.toFixed(dec):v)+(unit||'')+'</b>',e.clientX,e.clientY));
+      rect.addEventListener('mouseleave',hideTip);
+    });
+    y0+=series.length*rowH+gap;
+  });
+  el.appendChild(svg);
+}
+
+function lineChart(el,{series,height,xlabels,markers}){
+  el.innerHTML='';
+  const Wd=880,H=height||190,m={l:34,r:16,t:14,b:20};
+  const n=series[0].values.length;
+  const svg=sv('svg',{viewBox:`0 0 ${Wd} ${H}`,role:'img'},el);
+  const x=i=>m.l+i*(Wd-m.l-m.r)/(n-1), y=v=>m.t+(1-v/100)*(H-m.t-m.b);
+  (markers||[]).forEach(mk=>sv('rect',{x:x(mk.i)-2,y:m.t,width:4,height:H-m.t-m.b,class:'mark-band'},svg));
+  [0,50,100].forEach(v=>{sv('line',{x1:m.l,x2:Wd-m.r,y1:y(v),y2:y(v),class:v===0?'base':'gridl'},svg);
+    const t=sv('text',{x:m.l-6,y:y(v)+3,'text-anchor':'end'},svg);t.textContent=v;});
+  (xlabels||[]).forEach(xl=>{const t=sv('text',{x:x(xl.i),y:H-4,'text-anchor':'middle'},svg);t.textContent=xl.label;});
+  series.forEach(s=>{
+    const d=s.values.map((v,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(v).toFixed(1)).join(' ');
+    sv('path',{d,fill:'none',stroke:s.color,'stroke-width':2,opacity:dim(s.key)},svg);
+  });
+  const hit=sv('rect',{x:m.l,y:0,width:Wd-m.l-m.r,height:H,fill:'transparent'},svg);
+  hit.addEventListener('mousemove',e=>{
+    const r=svg.getBoundingClientRect();const px=(e.clientX-r.left)/r.width*Wd;
+    const i=Math.max(0,Math.min(n-1,Math.round((px-m.l)/((Wd-m.l-m.r)/(n-1)))));
+    let h='<div class="t">'+(i+1)+'주차</div>';
+    series.forEach(s=>h+='<div>'+s.name+' <b>'+s.values[i]+'</b></div>');
+    showTip(h,e.clientX,e.clientY);
+  });
+  hit.addEventListener('mouseleave',hideTip);
+  el.appendChild(svg);
+}
+
+function scatterChart(el,xs,ys,color,key){
+  el.innerHTML='';
+  const Wd=400,H=180,m={l:38,r:10,t:8,b:20};
+  const svg=sv('svg',{viewBox:`0 0 ${Wd} ${H}`,role:'img'},el);
+  const xMin=Math.min(...xs)*.95,xMax=Math.max(...xs)*1.03,yMin=0,yMax=Math.max(...ys)*1.1;
+  const x=v=>m.l+(v-xMin)/(xMax-xMin)*(Wd-m.l-m.r), y=v=>m.t+(1-(v-yMin)/(yMax-yMin))*(H-m.t-m.b);
+  [0,.5,1].forEach(f=>{const v=yMax*f; sv('line',{x1:m.l,x2:Wd-m.r,y1:y(v),y2:y(v),class:f===0?'base':'gridl'},svg);
+    const t=sv('text',{x:m.l-5,y:y(v)+3,'text-anchor':'end'},svg);t.textContent=Math.round(v);});
+  const nn=xs.length, mx=xs.reduce((a,b)=>a+b,0)/nn, my=ys.reduce((a,b)=>a+b,0)/nn;
+  let num=0,den=0; for(let i=0;i<nn;i++){num+=(xs[i]-mx)*(ys[i]-my); den+=(xs[i]-mx)**2;}
+  const slope=num/den, intercept=my-slope*mx;
+  sv('path',{d:`M${x(xMin)} ${y(slope*xMin+intercept)} L${x(xMax)} ${y(slope*xMax+intercept)}`,fill:'none',stroke:css('--ink'),'stroke-width':1.5,'stroke-dasharray':'5 4',opacity:dim(key)},svg);
+  xs.forEach((xv,i)=>{
+    const c=sv('circle',{cx:x(xv),cy:y(ys[i]),r:3,fill:color,opacity:.7*dim(key)},svg);
+    c.addEventListener('mousemove',e=>showTip('수요지수 '+xv.toFixed(2)+'<br>지출 <b>€'+Math.round(ys[i]).toLocaleString()+'</b>',e.clientX,e.clientY));
+    c.addEventListener('mouseleave',hideTip);
+  });
+  el.appendChild(svg);
+}
+
+/* ============ DATA ============ */
+const VENDOR={cats:['Apple','Samsung','Xiaomi','Motorola','Oppo'],de:[38.3,31.5,10.3,1.1,0.6],it:[34.1,26.9,10.3,5.0,3.9]};
+const deGen=[64,68,69,67,67,65,62,69,67,64,67,79,93,86,87,79,90,74,66,71,62,64,69,64,65,58,62,63,63,63,65,60,64,64,59,63,64,63,65,63,63,61,62,60,70,67,67,68,70,68,69,69,67,74,69,77,71,70,74,69,66,78,77,92,100,98,90,90,100,83,73,69,69,65,68,62,60,60,72,72,68,66,64,61,60,62,61,62,70,60,60,69,67,57,52,59,66,62,68,68,68,68,78,72,73,76,75];
+const itIph=[48,57,55,57,55,48,51,50,51,48,52,54,63,64,70,71,87,66,58,57,56,49,47,45,41,41,43,47,43,41,37,41,41,39,38,40,38,38,37,37,37,39,39,42,51,52,50,47,49,43,47,44,43,64,69,77,61,61,55,54,56,60,60,62,69,74,78,83,100,80,70,64,59,55,60,65,65,58,48,51,50,52,47,42,48,43,43,47,45,43,50,52,44,40,40,40,46,44,48,50,50,53,54,59,53,68,72];
+const EVMARK=(()=>{const START=Date.UTC(2024,8,1),W=7*864e5;const idx=s=>Math.round((Date.UTC(...s.split('-').map((v,i)=>i===1?v-1:+v))-START)/W);
+  return [idx('2024-09-08'),idx('2025-09-07'),idx('2026-09-06'),idx('2024-11-24'),idx('2025-11-23'),idx('2024-12-22'),idx('2025-12-21')].map(i=>({i}));})();
+const SC={DE:{demand:[0.875,1.049,1.069,1.042,1.015,0.961,0.914,0.986,0.98,0.937,0.97,1.142,1.36,1.269,1.247,1.146,1.335,1.073,0.951,0.982,0.903,0.926,0.962,0.919,0.923,0.844,0.9,0.91,0.907,0.91,0.927,0.867,0.927,0.913,0.837,0.891,0.903,0.894,0.913,0.894,0.876,0.846,0.856,0.844,0.982,0.953,0.939,0.942,0.965,0.925,0.935,0.942],
+  spend:[1426,1480,1501,1431,1419,1406,1381,1409,1426,1514,1473,1510,1532,1445,1492,1466,1445,1448,1426,1492,1488,1494,1611,1607,1658,1654,1474,1507,1508,1541,1526,1549,1510,1564,1513,1491,1493,1477,1523,1564,1583,1588,1528,1528,1562,1536,1553,1539,1566,1540,1558,1606]},
+ IT:{demand:[0.931,1.072,1.033,1.066,1.038,0.925,0.965,0.948,0.965,0.908,0.993,1.044,1.213,1.219,1.326,1.326,1.636,1.253,1.089,1.072,1.055,0.948,0.914,0.869,0.79,0.796,0.824,0.886,0.835,0.796,0.711,0.779,0.796,0.745,0.728,0.756,0.728,0.733,0.717,0.711,0.728,0.762,0.756,0.801,0.976,0.987,0.965,0.908,0.954,0.841,0.92,0.863],
+  spend:[774,818,807,800,781,803,795,786,806,816,813,818,810,797,793,817,800,811,818,798,783,818,905,884,910,886,821,828,831,840,835,840,814,846,854,820,863,819,832,865,877,879,858,866,836,833,839,858,845,875,841,869]}};
+const QUINTILE={DE:[17.15,15.01,14.87,13.66,10.89],IT:[15.42,12.95,10.58,10.17,8.47]};
+const KPI={DE:{gap:5.4,r2:0.032,ctr:0.79,uplift:1.44},IT:{gap:6.3,r2:0.001,ctr:0.884,uplift:1.96}};
+
+/* ============ PAGE 1: 시장 조사 ============ */
+function renderMarket(){
+  return `
+  <div class="page-header"><div class="page-header-top">
+    <div><div class="page-title">시장 조사</div><div class="page-subtitle">독일·이탈리아 시장 구조와 검색 수요 계절성 <span class="kpi-tag real">실측</span></div></div>
+    <div class="page-refresh">기준 2026-09-23 · Statcounter · Google Trends</div>
+  </div></div>
+  <div class="page-body">
+    <div class="kpi-row">
+      <div class="kpi-main"><div class="kpi-label">이탈리아 크리스마스 직전 주 검색 배율</div><div class="kpi-value" style="color:var(--it)">2.2×</div><div class="kpi-sub">8월 평균 대비 · cover iPhone 키워드</div></div>
+      <div class="kpi-card"><div class="kpi-label">독일 블랙프라이데이 주 검색 배율</div><div class="kpi-value" style="color:var(--de)">1.5×</div><div class="kpi-sub">8월 평균 대비</div></div>
+      <div class="kpi-card"><div class="kpi-label">슈피겐 Amazon 최고 순위</div><div class="kpi-value">#21</div><div class="kpi-sub">DE·IT 케이스 카테고리</div></div>
+      <div class="kpi-card"><div class="kpi-label">이탈리아 TikTok 광고</div><div class="kpi-value" style="color:var(--crit)">0건</div><div class="kpi-sub">2026년, 독일은 74건</div></div>
+    </div>
+    <div class="chart-grid col-2">
+      <div class="chart-card">
+        <div class="chart-title">제조사별 점유율 (12개월 평균)</div>
+        <div class="chart-subtitle">모바일 웹 트래픽 기준, %</div>
+        ${ci('두 시장 모두 Apple이 1위지만, 이탈리아는 Motorola·Oppo 같은 중저가 안드로이드 비중이 독일의 4~6배입니다.')}
+        <div class="chart" id="c-vendor"></div>
+        <div class="legend"><span class="legend-item"><span class="legend-dot" style="background:var(--de)"></span>독일</span><span class="legend-item"><span class="legend-dot" style="background:var(--it)"></span>이탈리아</span></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">검색 수요 추이 (자국 최고 주=100)</div>
+        <div class="chart-subtitle">독일 'Handyhülle' · 이탈리아 'cover iPhone'</div>
+        ${ci('음영은 아이폰 공개·블랙프라이데이·크리스마스 주간입니다. 정점의 위치가 시장마다 다릅니다.')}
+        <div class="chart" id="c-demand"></div>
+      </div>
+    </div>
+    <div class="section-divider"><div class="section-divider-text">그런데 이 수요 곡선을 실제 광고 집행과 겹쳐보면</div></div>
+    <div class="chart-card">
+      <div class="chart-title">수요는 계절을 타는데, 광고비는 그대로였다</div>
+      <div class="chart-subtitle">이어지는 ② 원인 분석에서 다룹니다</div>
+      ${ci('<span class="kpi-tag synth">합성</span> 위 실측 수요 계절성을 합성 광고비 데이터와 겹쳐보니, 지출-수요 상관관계(R²)가 0.03 수준으로 사실상 무관했습니다. 다음 페이지에서 원인을 3가지로 좁힙니다.')}
+    </div>
+  </div>`;
+}
+
+/* ============ PAGE 2: 원인 분석 ============ */
+function renderCause(){
+  const CAUSES=[
+    {k:'01 · PLAN',t:'계획 단계의 경직성',p1:'연간 예산이 월별 균등 배분으로 사전 확정되고, 수요지수가 편성 과정에 반영되지 않습니다.',p2:'해결: 수요지수 연동 주간 동적 예산 편성'},
+    {k:'02 · EXECUTE',t:'실행 단계의 경직성',p1:'캠페인이 일 예산 고정형(Daily Cap)으로 운영돼 피크 주에도 지출이 못 늘어납니다.',p2:'해결: 수요 임계치 도달 시 자동 증액 룰'},
+    {k:'03 · CHECK',t:'점검 체계의 부재',p1:'주간 CAC·효율 리포팅이 없어 채널 간 효율 격차도 방치됩니다.',p2:'해결: 주간 효율 대시보드 + 분기 리밸런싱'}
+  ];
+  return `
+  <div class="page-header"><div class="page-header-top">
+    <div><div class="page-title">원인 분석</div><div class="page-subtitle">왜 예산이 수요를 따라가지 못했나 <span class="kpi-tag synth">합성 시뮬레이션</span></div></div>
+    <div class="page-refresh">spigen-synthetic-data · 30,000명</div>
+  </div></div>
+  <div class="page-body">
+    <div class="kpi-row">
+      <div class="kpi-main"><div class="kpi-label">지출-수요 배분 격차 (상위 8주)</div><div class="kpi-value" id="kv-gap">—</div><div class="kpi-delta crit" id="kd-gap"></div></div>
+      <div class="kpi-card"><div class="kpi-label">지출-수요 탄력성 (R²)</div><div class="kpi-value" id="kv-r2">—</div><div class="kpi-sub">0에 가까울수록 무관계</div></div>
+      <div class="kpi-card"><div class="kpi-label">CTR-수요지수 상관계수</div><div class="kpi-value" id="kv-ctr">—</div><div class="kpi-sub">시장 신호는 존재함</div></div>
+    </div>
+    <div class="section-divider"><div class="section-divider-text">막연한 "예산 부족"을 3가지 원인으로 좁혔다</div></div>
+    <div class="trend-grid">
+      ${CAUSES.map(c=>`<div class="trend-card"><div class="k">${c.k}</div><h4>${c.t}</h4><p>${c.p1}</p><p><b>${c.p2}</b></p></div>`).join('')}
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">원인 → 근거 → 해결 요약</div>
+      <table class="data-table">
+        <thead><tr><th>원인</th><th>핵심 근거</th><th>해결 방향</th></tr></thead>
+        <tbody>
+          <tr><td><b>① Plan 경직성</b></td><td>지출-수요 회귀 R²&lt;0.04, EAI 격차&lt;1%p</td><td>월별 균등 배분 → 수요지수 연동 주간 편성</td></tr>
+          <tr><td><b>② Execute 경직성</b></td><td>DE 피크주 지출 -8.6%(수요 +46%), CPC 피크에 하락</td><td>Daily Cap → 수요 임계치 기반 자동 증액</td></tr>
+          <tr><td><b>③ Check 부재</b></td><td>최대 지출 채널(Meta)이 최저 효율</td><td>주간 CAC 대시보드 + 분기 리밸런싱</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+/* ============ PAGE 3: 시뮬레이션 ============ */
+function renderSim(){
+  return `
+  <div class="page-header"><div class="page-header-top">
+    <div><div class="page-title">시뮬레이션</div><div class="page-subtitle">정말 무관했다 — 숫자로 검증 <span class="kpi-tag synth">합성 데이터</span></div></div>
+    <div class="page-refresh">회귀분석 · 상관분석</div>
+  </div></div>
+  <div class="page-body">
+    <div class="kpi-row">
+      <div class="kpi-main"><div class="kpi-label">재배분 시 예상 신규고객 증가</div><div class="kpi-value good" id="kv-uplift" style="color:var(--good)">—</div><div class="kpi-sub">탄력성 가정 b=0.5, 총예산 동일</div></div>
+      <div class="kpi-card"><div class="kpi-label">DE 수요 최상위 분위 CAC</div><div class="kpi-value">€10.89</div><div class="kpi-delta good">▼ 36% (최하위 대비)</div></div>
+      <div class="kpi-card"><div class="kpi-label">IT 수요 최상위 분위 CAC</div><div class="kpi-value">€8.47</div><div class="kpi-delta good">▼ 45% (최하위 대비)</div></div>
+    </div>
+    <div class="chart-grid col-2">
+      <div class="chart-card">
+        <div class="chart-title">독일: 지출–수요 산점도</div>
+        <div class="chart-subtitle">점 하나 = 한 주, 점선 = 회귀선</div>
+        ${ci('R² = 0.032 — 점들이 넓게 흩어져 있고 회귀선이 거의 평평합니다.')}
+        <div class="chart" id="c-scatter-de"></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">이탈리아: 지출–수요 산점도</div>
+        <div class="chart-subtitle">점 하나 = 한 주, 점선 = 회귀선</div>
+        ${ci('R² = 0.001 — 독일보다도 더 무관계에 가깝습니다.')}
+        <div class="chart" id="c-scatter-it"></div>
+      </div>
+    </div>
+    <div class="chart-card" style="margin-bottom:18px">
+      <div class="chart-title">수요 분위별 고객획득단가 (CAC, €)</div>
+      <div class="chart-subtitle">한 주를 수요 크기 기준 5구간으로 분류</div>
+      ${ci('수요가 가장 높은 구간이 가장 저렴한 CAC를 보이는데도, 예산은 그 구간에 몰리지 않습니다.')}
+      <div class="chart" id="c-quintile"></div>
+      <div class="legend"><span class="legend-item"><span class="legend-dot" style="background:var(--de)"></span>독일</span><span class="legend-item"><span class="legend-dot" style="background:var(--it)"></span>이탈리아</span></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">액션 우선순위</div>
+      <table class="data-table">
+        <thead><tr><th>원인</th><th>액션</th><th>우선순위</th></tr></thead>
+        <tbody>
+          <tr><td>① Plan</td><td>수요지수 연동 주간 동적 예산 편성 전환</td><td><span class="pri high">높음</span></td></tr>
+          <tr><td>② Execute</td><td>Daily Cap 대신 수요 임계치 자동 증액 룰 도입</td><td><span class="pri high">높음</span></td></tr>
+          <tr><td>③ Check</td><td>주간 CAC 리포팅 체계 구축, 분기 채널 리밸런싱</td><td><span class="pri mid">중간</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+/* ============ render / navigate ============ */
+function renderPage(){
+  const el=document.getElementById('page-content');
+  if(tab==='market') el.innerHTML=renderMarket();
+  else if(tab==='cause') el.innerHTML=renderCause();
+  else el.innerHTML=renderSim();
+  afterRender();
+}
+window.navigate=navigate;
+window.setMarketFilter=setMarketFilter;
+
+function afterRender(){
+  if(tab==='market'){
+    hbars(document.getElementById('c-vendor'),{cats:VENDOR.cats,series:[{key:'DE',name:'독일',color:css('--de'),values:VENDOR.de},{key:'IT',name:'이탈리아',color:css('--it'),values:VENDOR.it}],max:40,unit:'%',dec:1,dimBySeries:true});
+    lineChart(document.getElementById('c-demand'),{series:[{key:'DE',name:'독일',color:css('--de'),values:deGen},{key:'IT',name:'이탈리아',color:css('--it'),values:itIph}],markers:EVMARK});
+  } else if(tab==='cause'){
+    const k = market==='all' ? {gap:(KPI.DE.gap+KPI.IT.gap)/2, r2:(KPI.DE.r2+KPI.IT.r2)/2, ctr:(KPI.DE.ctr+KPI.IT.ctr)/2} : KPI[market];
+    document.getElementById('kv-gap').innerHTML=k.gap.toFixed(1)+'<span style="font-size:14px">%p</span>';
+    document.getElementById('kd-gap').textContent = market==='all' ? 'DE 5.4%p · IT 6.3%p 평균' : (market==='DE'?'독일 기준':'이탈리아 기준');
+    document.getElementById('kv-r2').textContent=k.r2.toFixed(3);
+    document.getElementById('kv-ctr').textContent=k.ctr.toFixed(2);
+  } else {
+    const k = market==='all' ? {uplift:(KPI.DE.uplift+KPI.IT.uplift)/2} : KPI[market];
+    document.getElementById('kv-uplift').innerHTML='+'+k.uplift.toFixed(2)+'<span style="font-size:14px">%</span>';
+    scatterChart(document.getElementById('c-scatter-de'),SC.DE.demand,SC.DE.spend,css('--de'),'DE');
+    scatterChart(document.getElementById('c-scatter-it'),SC.IT.demand,SC.IT.spend,css('--it'),'IT');
+    hbars(document.getElementById('c-quintile'),{cats:['Q1 최저','Q2','Q3','Q4','Q5 최고'],series:[{key:'DE',name:'독일',color:css('--de'),values:QUINTILE.DE},{key:'IT',name:'이탈리아',color:css('--it'),values:QUINTILE.IT}],max:18,unit:'€',dec:2,dimBySeries:true});
+  }
+}
+
+renderPage();
+const mq=matchMedia('(prefers-color-scheme: dark)');
+mq.addEventListener&&mq.addEventListener('change',renderPage);
+new MutationObserver(renderPage).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+})();
+</script>

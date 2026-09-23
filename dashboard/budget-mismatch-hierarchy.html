@@ -1,0 +1,292 @@
+<title>수요-예산 미스매치 원인 트리</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --bg:#f4f2ec; --surface:#ffffff; --surface-2:#faf9f5;
+  --ink:#1c1b17; --ink-2:#4d4b43; --muted:#838074; --line:#e2ded2;
+  --purple-bg:#eeecfb; --purple-ln:#c7c0ef; --purple-tx:#4b3fa0;
+  --blue-bg:#e8f1fb; --blue-ln:#b7d3f2; --blue-tx:#1f5c9c;
+  --teal-bg:#e6f5f1; --teal-ln:#aedfd1; --teal-tx:#0f7a63;
+  --pink-bg:#fbebf1; --pink-ln:#f0c3d6; --pink-tx:#a13866;
+  --amber-bg:#fbf1de; --amber-ln:#edcf95; --amber-tx:#8a5e13;
+  --green-bg:#eef5e6; --green-ln:#c5dfae; --green-tx:#4c7a2e;
+  --slate-bg:#eeede8; --slate-ln:#cfccc0; --slate-tx:#54524a;
+  --goal-bg:#fbe9dd; --goal-ln:#f0b988; --goal-tx:#9a4b12;
+  --sans:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#171613; --surface:#211f1b; --surface-2:#262420;
+    --ink:#f1efe7; --ink-2:#c7c3b6; --muted:#8f8b7d; --line:#38352c;
+    --purple-bg:#2a2650; --purple-ln:#5f55b0; --purple-tx:#c3bcf2;
+    --blue-bg:#152b42; --blue-ln:#2f6ba3; --blue-tx:#a9d0f5;
+    --teal-bg:#0f2e28; --teal-ln:#1f7a62; --teal-tx:#9adcc6;
+    --pink-bg:#3a1c2a; --pink-ln:#8a3a5c; --pink-tx:#f0b0cd;
+    --amber-bg:#3a2c10; --amber-ln:#8a6a1f; --amber-tx:#f2ca7c;
+    --green-bg:#233318; --green-ln:#5a7a3c; --green-tx:#bfe19c;
+    --slate-bg:#2b2924; --slate-ln:#55524a; --slate-tx:#d4d1c5;
+    --goal-bg:#3d2410; --goal-ln:#a35f22; --goal-tx:#f5b877;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#171613; --surface:#211f1b; --surface-2:#262420;
+  --ink:#f1efe7; --ink-2:#c7c3b6; --muted:#8f8b7d; --line:#38352c;
+  --purple-bg:#2a2650; --purple-ln:#5f55b0; --purple-tx:#c3bcf2;
+  --blue-bg:#152b42; --blue-ln:#2f6ba3; --blue-tx:#a9d0f5;
+  --teal-bg:#0f2e28; --teal-ln:#1f7a62; --teal-tx:#9adcc6;
+  --pink-bg:#3a1c2a; --pink-ln:#8a3a5c; --pink-tx:#f0b0cd;
+  --amber-bg:#3a2c10; --amber-ln:#8a6a1f; --amber-tx:#f2ca7c;
+  --green-bg:#233318; --green-ln:#5a7a3c; --green-tx:#bfe19c;
+  --slate-bg:#2b2924; --slate-ln:#55524a; --slate-tx:#d4d1c5;
+  --goal-bg:#3d2410; --goal-ln:#a35f22; --goal-tx:#f5b877;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);padding-inline:16px;padding-block:0 48px}
+.wrap{max-width:1180px;margin:0 auto}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+header{padding-block:28px 18px;display:grid;gap:8px;border-bottom:1px solid var(--line);margin-bottom:8px}
+.eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h1{font-size:clamp(20px,3vw,26px);font-weight:700;letter-spacing:-.01em;margin:0;text-wrap:balance}
+.lede{color:var(--ink-2);font-size:14px;line-height:1.6;margin:0;max-width:74ch}
+
+.board{position:relative}
+.row{position:relative;display:flex;gap:14px;align-items:stretch;padding-block:14px;z-index:1}
+.rowlabel{flex:none;width:68px;display:flex;align-items:center;justify-content:center;text-align:center;border-radius:10px;font-size:12px;font-weight:600;line-height:1.3;padding:6px}
+.rowcontent{flex:1;min-width:0;display:flex}
+.rowcontent.full{align-items:stretch}
+.branches{flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.pairwrap{display:flex;flex-direction:column;gap:8px}
+.pair{display:flex;gap:8px}
+.pair.stack{flex-direction:column}
+
+.box{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13px;line-height:1.45;display:flex;flex-direction:column;justify-content:center;min-height:44px}
+.box .k{font-size:10.5px;font-weight:600;letter-spacing:.03em;text-transform:uppercase;margin-bottom:3px}
+.box.wide{width:100%;text-align:center;font-size:14.5px;font-weight:600;padding:16px 20px}
+.box.c-purple{background:var(--purple-bg);border-color:var(--purple-ln);color:var(--purple-tx)}
+.box.c-blue{background:var(--blue-bg);border-color:var(--blue-ln);color:var(--blue-tx)}
+.box.c-teal{background:var(--teal-bg);border-color:var(--teal-ln);color:var(--teal-tx);flex:1}
+.box.c-amber{background:var(--amber-bg);border-color:var(--amber-ln);color:var(--amber-tx);flex:1}
+.box.c-green{background:var(--green-bg);border-color:var(--green-ln);color:var(--green-tx);flex:1}
+.box.c-slate{background:var(--slate-bg);border-color:var(--slate-ln);color:var(--slate-tx)}
+.box.c-goal{background:var(--goal-bg);border-color:var(--goal-ln);color:var(--goal-tx);width:100%;text-align:center;font-size:15.5px;font-weight:700;padding:18px 22px}
+
+.chip-purple{background:var(--purple-bg);color:var(--purple-tx);border:1px solid var(--purple-ln)}
+.chip-blue{background:var(--blue-bg);color:var(--blue-tx);border:1px solid var(--blue-ln)}
+.chip-teal{background:var(--teal-bg);color:var(--teal-tx);border:1px solid var(--teal-ln)}
+.chip-pink{background:var(--pink-bg);color:var(--pink-tx);border:1px solid var(--pink-ln)}
+.chip-slate{background:var(--slate-bg);color:var(--slate-tx);border:1px solid var(--slate-ln)}
+.chip-goal{background:var(--goal-bg);color:var(--goal-tx);border:1px solid var(--goal-ln)}
+
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:12px;color:var(--ink-2);padding-block:10px 4px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:10px;height:10px;border-radius:3px;flex:none}
+
+svg.connectors{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:0}
+svg.connectors path{fill:none;stroke:var(--muted);stroke-width:1.6}
+svg.connectors circle{fill:var(--ink-2)}
+
+footer{margin-top:32px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);line-height:1.6}
+
+@media (max-width:900px){
+  .branches{grid-template-columns:1fr}
+  .row{flex-direction:column}
+  .rowlabel{width:100%;flex-direction:row;gap:6px;justify-content:flex-start;padding:8px 12px}
+}
+@media (max-width:560px){
+  .pair{flex-direction:column}
+}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">Spigen · Global Performance Marketing · 문제정의 → 원인 → 해결방안 프레임워크</div>
+  <h1>수요-예산 배분 미스매치 원인 트리</h1>
+  <p class="lede">"성수기 수요 대비 광고 예산 배분 부족으로 저비용 고객 획득 기회를 놓치고 있다"는 문제를 Plan · Execute · Check 3단계로 나눠 근본 원인을 좁히고, 원인별로 유저가 체감하는 조치와 비즈니스 내부 프로세스 조치를 함께 설계했습니다.</p>
+</header>
+
+<div class="legend">
+  <span><i style="background:var(--purple-bg);border:1px solid var(--purple-ln)"></i>문제 정의</span>
+  <span><i style="background:var(--blue-bg);border:1px solid var(--blue-ln)"></i>원인1 (MECE)</span>
+  <span><i style="background:var(--teal-bg);border:1px solid var(--teal-ln)"></i>원인2 (세부원인)</span>
+  <span><i style="background:var(--amber-bg);border:1px solid var(--amber-ln)"></i>해결방안 · User Side</span>
+  <span><i style="background:var(--green-bg);border:1px solid var(--green-ln)"></i>해결방안 · Biz Side</span>
+  <span><i style="background:var(--slate-bg);border:1px solid var(--slate-ln)"></i>목표 지표</span>
+  <span><i style="background:var(--goal-bg);border:1px solid var(--goal-ln)"></i>GOAL</span>
+</div>
+
+<div class="board" id="board">
+<svg class="connectors" id="conn"></svg>
+
+<div class="row" id="row-problem">
+  <div class="rowlabel chip-purple">문제<br>정의</div>
+  <div class="rowcontent full">
+    <div class="box wide c-purple" id="problem">성수기 수요 대비 광고 예산 배분 부족으로<br>저비용 고객 획득 기회 손실</div>
+  </div>
+</div>
+
+<div class="row" id="row-c1">
+  <div class="rowlabel chip-blue">원인1<br><span style="font-weight:400;font-size:10px">MECE</span></div>
+  <div class="rowcontent">
+    <div class="branches">
+      <div class="box c-blue" id="c1-1">예산 계획(Plan) 단계의 경직성</div>
+      <div class="box c-blue" id="c1-2">캠페인 실행(Execute) 단계의 경직성</div>
+      <div class="box c-blue" id="c1-3">성과 모니터링(Check) 체계 미비</div>
+    </div>
+  </div>
+</div>
+
+<div class="row" id="row-c2">
+  <div class="rowlabel chip-teal">원인2</div>
+  <div class="rowcontent">
+    <div class="branches">
+      <div class="pair">
+        <div class="box c-teal" id="c2-1a">연간 예산이 월별 균등 배분으로 사전 고정 편성</div>
+        <div class="box c-teal" id="c2-1b">수요지수 데이터가 미디어플래닝에 미연동</div>
+      </div>
+      <div class="pair">
+        <div class="box c-teal" id="c2-2a">캠페인이 일 예산(Daily Cap) 고정형으로 운영</div>
+        <div class="box c-teal" id="c2-2b">예산 증액 승인 리드타임 1주 이상 소요</div>
+      </div>
+      <div class="pair">
+        <div class="box c-teal" id="c2-3a">주간 단위 CAC·ROAS 리포팅 체계 부재</div>
+        <div class="box c-teal" id="c2-3b">시즌 종료 후 회고가 차기 예산 편성에 미반영</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row" id="row-sol">
+  <div class="rowlabel chip-pink">해결<br>방안</div>
+  <div class="rowcontent">
+    <div class="branches">
+      <div class="pair">
+        <div class="box c-amber" id="sol-1-user"><span class="k">User Side</span>피크 주간 소재 사전 예약으로 광고 노출 끊김 방지</div>
+        <div class="box c-green" id="sol-1-biz"><span class="k">Biz Side</span>수요지수 연동 주간 단위 동적 예산 편성 프로세스 도입</div>
+      </div>
+      <div class="pair">
+        <div class="box c-amber" id="sol-2-user"><span class="k">User Side</span>피크 대응 오퍼·소재 사전 세팅으로 증액 즉시 노출</div>
+        <div class="box c-green" id="sol-2-biz"><span class="k">Biz Side</span>수요 임계치 도달 시 자동 증액되는 룰베이스 예산 자동화</div>
+      </div>
+      <div class="pair">
+        <div class="box c-amber" id="sol-3-user"><span class="k">User Side</span>저효율 소재 실시간 교체로 관련성 높은 광고만 노출</div>
+        <div class="box c-green" id="sol-3-biz"><span class="k">Biz Side</span>주간 CAC·ROAS 대시보드 구축 및 시즌 회고 반영 체계화</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row" id="row-kpi">
+  <div class="rowlabel chip-slate">목표<br>지표</div>
+  <div class="rowcontent">
+    <div class="branches">
+      <div class="box c-slate" id="kpi-1">수요-지출 배분 격차 <span class="mono">n%p</span> 이내 축소<br><span style="color:var(--muted);font-size:11.5px">(현재 5.4~6.3%p)</span></div>
+      <div class="box c-slate" id="kpi-2">피크주 예산 증액 리드타임 <span class="mono">n일</span> 이내</div>
+      <div class="box c-slate" id="kpi-3">주간 리포팅 커버리지 <span class="mono">100%</span>, 회고 반영률 <span class="mono">n%</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="row" id="row-goal">
+  <div class="rowlabel chip-goal">GOAL</div>
+  <div class="rowcontent full">
+    <div class="box c-goal" id="goal">수요지수 기반 예산 재배분으로 4분기 신규 고객 획득 <span class="mono">N%</span> 증가 및 피크주 CAC <span class="mono">N%</span> 절감</div>
+  </div>
+</div>
+</div>
+
+<footer>
+  근거: 탭2 시뮬레이션 — 수요 상위 8주 배분 격차 DE 5.4%p·IT 6.3%p, 수요 최상위 분위 CAC가 최하위 대비 DE 36%·IT 45% 낮음, 탄력성 가정(b=0.5) 재배분 시 신규고객 DE +1.6%·IT +2.4% 증가. 목표 지표의 n·N은 내부 실측 데이터로 확정할 값입니다.
+</footer>
+</div>
+
+<script>
+(function(){
+function draw(){
+  const board = document.getElementById('board');
+  const svg = document.getElementById('conn');
+  const bRect = board.getBoundingClientRect();
+  svg.setAttribute('width', bRect.width);
+  svg.setAttribute('height', bRect.height);
+  svg.innerHTML = '';
+  const NS = 'http://www.w3.org/2000/svg';
+  function pt(id){
+    const el = document.getElementById(id);
+    const r = el.getBoundingClientRect();
+    return {
+      top: {x: r.left + r.width/2 - bRect.left, y: r.top - bRect.top},
+      bottom: {x: r.left + r.width/2 - bRect.left, y: r.bottom - bRect.top}
+    };
+  }
+  function path(d){
+    const p = document.createElementNS(NS,'path');
+    p.setAttribute('d', d);
+    svg.appendChild(p);
+  }
+  function dot(x,y){
+    const c = document.createElementNS(NS,'circle');
+    c.setAttribute('cx',x); c.setAttribute('cy',y); c.setAttribute('r',2.5);
+    svg.appendChild(c);
+  }
+  function fanOut(parentId, childIds){
+    const p = pt(parentId).bottom;
+    childIds.forEach(cid=>{
+      const c = pt(cid).top;
+      const bendY = p.y + (c.y - p.y) * 0.5;
+      path(`M${p.x} ${p.y} L${p.x} ${bendY} L${c.x} ${bendY} L${c.x} ${c.y}`);
+    });
+  }
+  function mergeSplit(parentIds, childIds, branchX){
+    const parents = parentIds.map(pt);
+    const children = childIds.map(pt);
+    const midY = (parents[0].bottom.y + children[0].top.y) / 2;
+    parents.forEach(p=>{
+      path(`M${p.bottom.x} ${p.bottom.y} L${p.bottom.x} ${midY} L${branchX} ${midY}`);
+    });
+    dot(branchX, midY);
+    children.forEach(c=>{
+      path(`M${branchX} ${midY} L${c.top.x} ${midY} L${c.top.x} ${c.top.y}`);
+    });
+  }
+  function fanIn(parentIds, childId){
+    const c = pt(childId).top;
+    parentIds.forEach(pid=>{
+      const p = pt(pid).bottom;
+      const bendY = p.y + (c.y - p.y) * 0.5;
+      path(`M${p.x} ${p.y} L${p.x} ${bendY} L${c.x} ${bendY} L${c.x} ${c.y}`);
+    });
+  }
+
+  fanOut('problem', ['c1-1','c1-2','c1-3']);
+
+  fanOut('c1-1', ['c2-1a','c2-1b']);
+  fanOut('c1-2', ['c2-2a','c2-2b']);
+  fanOut('c1-3', ['c2-3a','c2-3b']);
+
+  const branchX1 = pt('c1-1').bottom.x;
+  const branchX2 = pt('c1-2').bottom.x;
+  const branchX3 = pt('c1-3').bottom.x;
+  mergeSplit(['c2-1a','c2-1b'], ['sol-1-user','sol-1-biz'], branchX1);
+  mergeSplit(['c2-2a','c2-2b'], ['sol-2-user','sol-2-biz'], branchX2);
+  mergeSplit(['c2-3a','c2-3b'], ['sol-3-user','sol-3-biz'], branchX3);
+
+  fanIn(['sol-1-user','sol-1-biz'], 'kpi-1');
+  fanIn(['sol-2-user','sol-2-biz'], 'kpi-2');
+  fanIn(['sol-3-user','sol-3-biz'], 'kpi-3');
+
+  fanIn(['kpi-1','kpi-2','kpi-3'], 'goal');
+}
+let raf;
+function scheduleDraw(){ cancelAnimationFrame(raf); raf = requestAnimationFrame(draw); }
+window.addEventListener('resize', scheduleDraw);
+window.addEventListener('load', scheduleDraw);
+if(document.fonts && document.fonts.ready){ document.fonts.ready.then(scheduleDraw); }
+new ResizeObserver(scheduleDraw).observe(document.getElementById('board'));
+scheduleDraw();
+setTimeout(scheduleDraw, 120);
+})();
+</script>

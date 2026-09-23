@@ -1,0 +1,360 @@
+<title>DE·IT Demand Gap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --bg:#f1f2ef; --surface:#ffffff; --surface-2:#f7f8f6;
+  --ink:#15171a; --ink-2:#4b5057; --muted:#7b8189; --line:#e0e2de; --grid:#eceeea;
+  --de:#2a78d6; --it:#eb6834; --grey-series:#a9aeb4;
+  --good:#1a7f4b; --warn:#b26a00; --crit:#c2352f;
+  --good-bg:#e5f3ea; --warn-bg:#fbf0dc; --crit-bg:#fbe6e4;
+  --synth:#7c5cbf; --synth-bg:#efe9f8;
+  --sans:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#121416; --surface:#1b1e21; --surface-2:#22262a;
+    --ink:#f2f3f1; --ink-2:#c1c5c9; --muted:#8e949b; --line:#2e3338; --grid:#262a2e;
+    --de:#3987e5; --it:#d95926; --grey-series:#6c737a;
+    --good:#5fc48f; --warn:#e3a33b; --crit:#ef7a73;
+    --good-bg:#17301f; --warn-bg:#33270f; --crit-bg:#3a1a18;
+    --synth:#a98ee0; --synth-bg:#2b2438;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#121416; --surface:#1b1e21; --surface-2:#22262a;
+  --ink:#f2f3f1; --ink-2:#c1c5c9; --muted:#8e949b; --line:#2e3338; --grid:#262a2e;
+  --de:#3987e5; --it:#d95926; --grey-series:#6c737a;
+  --good:#5fc48f; --warn:#e3a33b; --crit:#ef7a73;
+  --good-bg:#17301f; --warn-bg:#33270f; --crit-bg:#3a1a18;
+  --synth:#a98ee0; --synth-bg:#2b2438;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.65;margin:0;padding-inline:16px;padding-block:0 64px}
+.wrap{max-width:920px;margin:0 auto}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+h1,h2,h3{text-wrap:balance;margin:0}
+.sw{display:inline-block;width:10px;height:10px;border-radius:2px;flex:none;margin-right:6px}
+.sw.de{background:var(--de)} .sw.it{background:var(--it)} .sw.synth{background:var(--synth)}
+
+header.top{padding-block:48px 26px;display:grid;gap:16px;border-bottom:1px solid var(--line)}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h1{font-size:clamp(24px,3.8vw,36px);line-height:1.25;font-weight:700;letter-spacing:-.015em;max-width:21ch}
+.lede{color:var(--ink-2);max-width:66ch;margin:0;font-size:15.5px}
+.meta{display:flex;flex-wrap:wrap;gap:8px 20px;font-size:13px;color:var(--muted)}
+
+.stepnav{display:flex;gap:8px;padding-block:16px;flex-wrap:wrap}
+.stepnav a{font-size:12.5px;font-weight:600;color:var(--ink-2);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 13px;text-decoration:none}
+
+section.block{padding-block:38px 6px;display:grid;gap:16px;scroll-margin-top:20px}
+.step-head{display:grid;gap:6px}
+.step-head .eyebrow{display:flex;align-items:center;gap:8px}
+.step-head .eyebrow .num{width:20px;height:20px;border-radius:50%;background:var(--ink);color:var(--bg);display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
+.step-head h2{font-size:22px;font-weight:700;letter-spacing:-.01em}
+.step-head p{margin:0;color:var(--ink-2);max-width:70ch;font-size:14.5px}
+.tag{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:999px;letter-spacing:.02em}
+.tag.real{background:var(--good-bg);color:var(--good)}
+.tag.synth{background:var(--synth-bg);color:var(--synth)}
+.tag.mix{background:var(--warn-bg);color:var(--warn)}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;display:grid;gap:10px;align-content:start;min-width:0}
+.panel h3{font-size:13.5px;font-weight:600;display:flex;align-items:center;gap:8px}
+.panel .sub{font-size:11.5px;color:var(--muted);margin:-6px 0 0}
+.chart{position:relative;width:100%}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.chart text{font-size:9.5px;fill:var(--muted)}
+.chart .gridl{stroke:var(--grid);stroke-width:1}
+.chart .base{stroke:var(--line);stroke-width:1}
+.chart .mark-band{fill:var(--ink);opacity:.05}
+.chart .mark-lab{fill:var(--ink-2);font-size:9px}
+.axis-note{font-size:11.5px;color:var(--muted)}
+
+.findbar{display:flex;flex-wrap:wrap;gap:10px}
+.find{flex:1;min-width:180px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:grid;gap:2px}
+.find .n{font-family:var(--mono);font-size:22px;font-weight:600}
+.find .l{font-size:12px;color:var(--ink-2)}
+
+.callout{background:var(--surface-2);border:1px solid var(--line);border-left:3px solid var(--synth);border-radius:0 10px 10px 0;padding:16px 18px;display:grid;gap:4px}
+.callout b{font-size:15px}
+.callout p{margin:0;font-size:13.5px;color:var(--ink-2)}
+
+.causes{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.cause{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px}
+.cause .k{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.cause h3{font-size:14.5px;font-weight:700;margin:4px 0 8px}
+.cause p{margin:0;font-size:12.5px;color:var(--ink-2);line-height:1.55}
+.cause p+p{margin-top:6px}
+
+#tip{position:fixed;pointer-events:none;background:var(--ink);color:var(--bg);font-size:11.5px;line-height:1.5;padding:7px 9px;border-radius:6px;z-index:50;max-width:230px;opacity:0;transition:opacity .08s}
+#tip .t{font-family:var(--mono);font-size:10.5px;opacity:.75;margin-bottom:2px}
+
+.actionlist{display:grid;gap:8px}
+.actionlist li{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;color:var(--ink-2)}
+.actionlist .no{font-family:var(--mono);font-size:11px;color:var(--synth);font-weight:700;flex:none;margin-top:2px}
+
+footer.src{margin-top:44px;padding-top:18px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);display:grid;gap:8px}
+footer.src p{margin:0;max-width:88ch}
+
+@media (max-width:720px){
+  .grid-2,.causes{grid-template-columns:1fr}
+  .findbar{flex-direction:column}
+}
+</style>
+
+<div class="wrap">
+<header class="top">
+  <div class="eyebrow">Spigen · Global Performance Marketing 지원 포트폴리오</div>
+  <h1>독일·이탈리아, 수요는 계절을 타는데 예산은 그대로였다</h1>
+  <p class="lede">시장 조사에서 발견한 계절성 패턴을 실제 광고 집행과 겹쳐본 뒤, 원인을 3가지로 좁히고, 데이터로 직접 검증했습니다.</p>
+  <div class="meta">
+    <span><i class="sw de"></i>독일 (DE)</span>
+    <span><i class="sw it"></i>이탈리아 (IT)</span>
+    <span><i class="sw synth"></i>합성 데이터 표시</span>
+    <span>기준일 <b class="mono">2026-09-23</b></span>
+  </div>
+</header>
+
+<nav class="stepnav">
+  <a href="#s1">① 시장 조사</a><a href="#s2">② 원인 분석</a><a href="#s3">③ 시뮬레이션</a>
+</nav>
+
+<!-- STEP 1 -->
+<section class="block" id="s1">
+  <div class="step-head">
+    <div class="eyebrow"><span class="num">1</span>시장 조사 <span class="tag real">실측 데이터</span></div>
+    <h2>두 시장은 같은 유럽이지만 다른 리듬으로 움직인다</h2>
+    <p>기기 점유율은 두 나라 모두 아이폰이 1위지만, 이탈리아는 중저가 안드로이드 비중이 훨씬 큽니다. 검색 수요는 독일이 블랙프라이데이, 이탈리아가 크리스마스 직전에 정점을 찍습니다(Statcounter·Google Trends 실측).</p>
+  </div>
+  <div class="grid-2">
+    <div class="panel">
+      <h3>제조사별 점유율 (12개월 평균, %)</h3>
+      <div class="chart" id="vendorBars"></div>
+      <div class="axis-note">출처: Statcounter Global Stats</div>
+    </div>
+    <div class="panel">
+      <h3>검색 수요 추이 (자국 최고 주=100)</h3>
+      <div class="chart" id="demandChart"></div>
+      <div class="axis-note"><i class="sw de"></i>독일 'Handyhülle' · <i class="sw it"></i>이탈리아 'cover iPhone' — 음영은 블랙프라이데이·크리스마스·아이폰 공개 주</div>
+    </div>
+  </div>
+  <div class="findbar">
+    <div class="find"><div class="n" style="color:var(--de)">1.5×</div><div class="l">독일 블랙프라이데이 주 검색량 (8월 평균 대비)</div></div>
+    <div class="find"><div class="n" style="color:var(--it)">2.2×</div><div class="l">이탈리아 크리스마스 직전 주 검색량 (8월 평균 대비)</div></div>
+  </div>
+</section>
+
+<div class="wrap">
+  <div class="callout">
+    <b>그런데 이 수요 곡선을 실제 광고비 집행 데이터와 겹쳐보면—</b>
+    <p>수요는 계절에 따라 저렇게 크게 움직이는데, 같은 기간 광고비는 한 해 내내 거의 평평했습니다. <span class="tag mix">실측 수요 + 합성 지출 비교</span></p>
+  </div>
+</div>
+
+<!-- STEP 2 -->
+<section class="block" id="s2">
+  <div class="step-head">
+    <div class="eyebrow"><span class="num">2</span>원인 분석 <span class="tag synth">합성 시뮬레이션</span></div>
+    <h2>왜 예산이 수요를 따라가지 못했나</h2>
+    <p>"예산이 부족하다"는 막연한 문제를 계획·실행·점검 3단계로 나눠 원인을 좁혔습니다.</p>
+  </div>
+  <div class="causes">
+    <div class="cause">
+      <div class="k">01 · PLAN</div>
+      <h3>계획 단계의 경직성</h3>
+      <p>연간 예산이 월별 균등 배분으로 사전 확정되고, 수요지수가 편성 과정에 반영되지 않습니다.</p>
+      <p><b>해결:</b> 수요지수 연동 주간 동적 예산 편성</p>
+    </div>
+    <div class="cause">
+      <div class="k">02 · EXECUTE</div>
+      <h3>실행 단계의 경직성</h3>
+      <p>캠페인이 일 예산 고정형(Daily Cap)으로 운영돼 피크 주에도 지출이 못 늘어납니다.</p>
+      <p><b>해결:</b> 수요 임계치 도달 시 자동 증액 룰</p>
+    </div>
+    <div class="cause">
+      <div class="k">03 · CHECK</div>
+      <h3>점검 체계의 부재</h3>
+      <p>주간 CAC·효율 리포팅이 없어 채널 간 효율 격차도 방치됩니다.</p>
+      <p><b>해결:</b> 주간 효율 대시보드 + 분기 리밸런싱</p>
+    </div>
+  </div>
+</section>
+
+<!-- STEP 3 -->
+<section class="block" id="s3">
+  <div class="step-head">
+    <div class="eyebrow"><span class="num">3</span>시뮬레이션으로 검증 <span class="tag synth">합성 데이터</span></div>
+    <h2>정말 무관했다 — 숫자로 확인했다</h2>
+    <p>30,000명 규모 합성 고객 데이터로 주간 광고비를 만들고, 실측 수요지수에 회귀분석을 돌려봤습니다. 점 하나 = 한 주, 점선은 회귀선입니다.</p>
+  </div>
+  <div class="grid-2">
+    <div class="panel">
+      <h3><i class="sw de"></i>독일: 지출–수요 산점도</h3>
+      <div class="chart" id="scatterDE"></div>
+      <div class="axis-note">R² = <b class="mono">0.032</b> — 사실상 무관</div>
+    </div>
+    <div class="panel">
+      <h3><i class="sw it"></i>이탈리아: 지출–수요 산점도</h3>
+      <div class="chart" id="scatterIT"></div>
+      <div class="axis-note">R² = <b class="mono">0.001</b> — 사실상 무관</div>
+    </div>
+  </div>
+  <div class="panel">
+    <h3>수요 분위별 고객획득단가(CAC, €)</h3>
+    <p class="sub">한 주를 수요 크기 기준 5구간으로 나눠 비교 — 수요가 가장 높은 구간이 가장 저렴합니다</p>
+    <div class="chart" id="quintileBars"></div>
+  </div>
+  <div class="panel">
+    <h3>그래서, 다음에 할 일</h3>
+    <ul class="actionlist">
+      <li><span class="no">01</span>월별 균등 배분을 수요지수 연동 주간 편성으로 전환 (원인① 직결)</li>
+      <li><span class="no">02</span>Daily Cap 대신 수요 임계치 기반 자동 증액 룰 도입 (원인② 직결)</li>
+      <li><span class="no">03</span>주간 CAC 리포팅 체계 구축 후 분기별 채널 리밸런싱 (원인③ 직결)</li>
+    </ul>
+  </div>
+</section>
+
+<footer class="src">
+  <p><b style="color:var(--ink)">실측 vs 합성 표시 원칙</b> — 초록 배지(실측)는 Statcounter·Google Trends 공개 데이터입니다. 보라 배지(합성)는 제가 설계한 가상 고객 30,000명 데이터(spigen-synthetic-data, Python)를 분석한 결과이며, 실제 슈피겐 데이터가 아닙니다. 두 성격을 한 화면·한 문장에 섞지 않는 것을 원칙으로 삼았습니다.</p>
+</footer>
+</div>
+
+<div id="tip" role="tooltip"></div>
+
+<script>
+(function(){
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const tip=document.getElementById('tip');
+function showTip(html,x,y){tip.innerHTML=html;tip.style.opacity=1;const r=tip.getBoundingClientRect();let L=x+14,T=y+14;if(L+r.width>innerWidth-8)L=x-r.width-14;if(T+r.height>innerHeight-8)T=y-r.height-14;tip.style.left=Math.max(8,L)+'px';tip.style.top=Math.max(8,T)+'px';}
+function hideTip(){tip.style.opacity=0}
+const NS='http://www.w3.org/2000/svg';
+function sv(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+
+/* ---------- vendor share bars ---------- */
+function vendorBars(el){
+  el.innerHTML='';
+  const cats=['Apple','Samsung','Xiaomi','Motorola','Oppo'];
+  const de=[38.3,31.5,10.3,1.1,0.6], it=[34.1,26.9,10.3,5.0,3.9], max=40;
+  const Wd=420,rowH=26,H=cats.length*rowH*2+10,m={l:66,r:44,t:4,b:4};
+  const svg=sv('svg',{viewBox:`0 0 ${Wd} ${H}`,role:'img'},el);
+  cats.forEach((c,i)=>{
+    const y0=m.t+i*rowH*2;
+    const lab=sv('text',{x:m.l-8,y:y0+rowH-6,'text-anchor':'end'},svg);lab.textContent=c;
+    [['de',de[i]],['it',it[i]]].forEach(([cls,v],k)=>{
+      const w=(v/max)*(Wd-m.l-m.r);
+      const rect=sv('rect',{x:m.l,y:y0+k*11,width:w,height:9,rx:2,fill:css('--'+cls)},svg);
+      const t=sv('text',{x:m.l+w+6,y:y0+k*11+8,style:'fill:'+css('--ink-2')},svg);t.textContent=v.toFixed(1)+'%';
+      rect.addEventListener('mousemove',e=>showTip('<div class="t">'+c+'</div>'+(cls==='de'?'독일':'이탈리아')+' <b>'+v.toFixed(1)+'%</b>',e.clientX,e.clientY));
+      rect.addEventListener('mouseleave',hideTip);
+    });
+  });
+  el.appendChild(svg);
+}
+
+/* ---------- demand small line ---------- */
+const START=Date.UTC(2024,8,1), W=7*864e5;
+const deGen=[64,68,69,67,67,65,62,69,67,64,67,79,93,86,87,79,90,74,66,71,62,64,69,64,65,58,62,63,63,63,65,60,64,64,59,63,64,63,65,63,63,61,62,60,70,67,67,68,70,68,69,69,67,74,69,77,71,70,74,69,66,78,77,92,100,98,90,90,100,83,73,69,69,65,68,62,60,60,72,72,68,66,64,61,60,62,61,62,70,60,60,69,67,57,52,59,66,62,68,68,68,68,78,72,73,76,75];
+const itIph=[48,57,55,57,55,48,51,50,51,48,52,54,63,64,70,71,87,66,58,57,56,49,47,45,41,41,43,47,43,41,37,41,41,39,38,40,38,38,37,37,37,39,39,42,51,52,50,47,49,43,47,44,43,64,69,77,61,61,55,54,56,60,60,62,69,74,78,83,100,80,70,64,59,55,60,65,65,58,48,51,50,52,47,42,48,43,43,47,45,43,50,52,44,40,40,40,46,44,48,50,50,53,54,59,53,68,72];
+function idxOf(base=0.9){return v=>v;}
+function eventMarkers(){
+  const idx=s=>Math.round((Date.UTC(...s.split('-').map((v,i)=>i===1?v-1:+v))-START)/W);
+  return [
+    {i:idx('2024-09-08'),label:'iPhone'},{i:idx('2025-09-07'),label:'iPhone'},{i:idx('2026-09-06'),label:'iPhone'},
+    {i:idx('2024-11-24'),label:'BF'},{i:idx('2025-11-23'),label:'BF'},
+    {i:idx('2024-12-22'),label:'Xmas'},{i:idx('2025-12-21'),label:'Xmas'}];
+}
+function demandChart(el){
+  el.innerHTML='';
+  const Wd=420,H=180,m={l:26,r:8,t:16,b:16};
+  const n=deGen.length;
+  const svg=sv('svg',{viewBox:`0 0 ${Wd} ${H}`,role:'img'},el);
+  const x=i=>m.l+i*(Wd-m.l-m.r)/(n-1), y=v=>m.t+(1-v/100)*(H-m.t-m.b);
+  eventMarkers().forEach(mk=>{
+    sv('rect',{x:x(mk.i)-2,y:m.t,width:4,height:H-m.t-m.b,class:'mark-band'},svg);
+  });
+  [0,50,100].forEach(v=>{sv('line',{x1:m.l,x2:Wd-m.r,y1:y(v),y2:y(v),class:v===0?'base':'gridl'},svg);
+    const t=sv('text',{x:m.l-4,y:y(v)+3,'text-anchor':'end'},svg);t.textContent=v;});
+  [[deGen,css('--de')],[itIph,css('--it')]].forEach(([arr,color])=>{
+    const d=arr.map((v,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(v).toFixed(1)).join(' ');
+    sv('path',{d,fill:'none',stroke:color,'stroke-width':1.75,'stroke-linejoin':'round'},svg);
+  });
+  const hit=sv('rect',{x:m.l,y:0,width:Wd-m.l-m.r,height:H,fill:'transparent'},svg);
+  hit.addEventListener('mousemove',e=>{
+    const r=svg.getBoundingClientRect();const px=(e.clientX-r.left)/r.width*Wd;
+    const i=Math.max(0,Math.min(n-1,Math.round((px-m.l)/((Wd-m.l-m.r)/(n-1)))));
+    showTip('<div class="t">'+(i+1)+'주차</div><div>독일 <b>'+deGen[i]+'</b></div><div>이탈리아 <b>'+itIph[i]+'</b></div>',e.clientX,e.clientY);
+  });
+  hit.addEventListener('mouseleave',hideTip);
+  el.appendChild(svg);
+}
+
+/* ---------- scatter ---------- */
+const SC = {
+ DE:{demand:[0.875,1.049,1.069,1.042,1.015,0.961,0.914,0.986,0.98,0.937,0.97,1.142,1.36,1.269,1.247,1.146,1.335,1.073,0.951,0.982,0.903,0.926,0.962,0.919,0.923,0.844,0.9,0.91,0.907,0.91,0.927,0.867,0.927,0.913,0.837,0.891,0.903,0.894,0.913,0.894,0.876,0.846,0.856,0.844,0.982,0.953,0.939,0.942,0.965,0.925,0.935,0.942],
+      spend:[1426,1480,1501,1431,1419,1406,1381,1409,1426,1514,1473,1510,1532,1445,1492,1466,1445,1448,1426,1492,1488,1494,1611,1607,1658,1654,1474,1507,1508,1541,1526,1549,1510,1564,1513,1491,1493,1477,1523,1564,1583,1588,1528,1528,1562,1536,1553,1539,1566,1540,1558,1606]},
+ IT:{demand:[0.931,1.072,1.033,1.066,1.038,0.925,0.965,0.948,0.965,0.908,0.993,1.044,1.213,1.219,1.326,1.326,1.636,1.253,1.089,1.072,1.055,0.948,0.914,0.869,0.79,0.796,0.824,0.886,0.835,0.796,0.711,0.779,0.796,0.745,0.728,0.756,0.728,0.733,0.717,0.711,0.728,0.762,0.756,0.801,0.976,0.987,0.965,0.908,0.954,0.841,0.92,0.863],
+      spend:[774,818,807,800,781,803,795,786,806,816,813,818,810,797,793,817,800,811,818,798,783,818,905,884,910,886,821,828,831,840,835,840,814,846,854,820,863,819,832,865,877,879,858,866,836,833,839,858,845,875,841,869]}
+};
+function scatterChart(el,xs,ys,color){
+  el.innerHTML='';
+  const Wd=380,H=190,m={l:40,r:10,t:8,b:22};
+  const svg=sv('svg',{viewBox:`0 0 ${Wd} ${H}`,role:'img'},el);
+  const xMin=Math.min(...xs)*0.95,xMax=Math.max(...xs)*1.03,yMin=0,yMax=Math.max(...ys)*1.1;
+  const x=v=>m.l+(v-xMin)/(xMax-xMin)*(Wd-m.l-m.r), y=v=>m.t+(1-(v-yMin)/(yMax-yMin))*(H-m.t-m.b);
+  [0,0.5,1].forEach(f=>{const v=yMax*f; sv('line',{x1:m.l,x2:Wd-m.r,y1:y(v),y2:y(v),class:f===0?'base':'gridl'},svg);
+    const t=sv('text',{x:m.l-5,y:y(v)+3,'text-anchor':'end'},svg);t.textContent=Math.round(v);});
+  const nn=xs.length, mx=xs.reduce((a,b)=>a+b,0)/nn, my=ys.reduce((a,b)=>a+b,0)/nn;
+  let num=0,den=0; for(let i=0;i<nn;i++){num+=(xs[i]-mx)*(ys[i]-my); den+=(xs[i]-mx)**2;}
+  const slope=num/den, intercept=my-slope*mx;
+  sv('path',{d:`M${x(xMin)} ${y(slope*xMin+intercept)} L${x(xMax)} ${y(slope*xMax+intercept)}`,fill:'none',stroke:css('--ink'),'stroke-width':1.5,'stroke-dasharray':'5 4'},svg);
+  xs.forEach((xv,i)=>{
+    const c=sv('circle',{cx:x(xv),cy:y(ys[i]),r:3,fill:color,opacity:.7},svg);
+    c.addEventListener('mousemove',e=>showTip('<div class="t">수요지수 '+xv.toFixed(2)+'</div>지출 <b>€'+Math.round(ys[i]).toLocaleString()+'</b>',e.clientX,e.clientY));
+    c.addEventListener('mouseleave',hideTip);
+  });
+  el.appendChild(svg);
+}
+
+/* ---------- quintile bars ---------- */
+function quintileBars(el){
+  el.innerHTML='';
+  const cats=['Q1 최저수요','Q2','Q3','Q4','Q5 최고수요'];
+  const de=[17.15,15.01,14.87,13.66,10.89], it=[15.42,12.95,10.58,10.17,8.47], max=18;
+  const Wd=680,rowH=26,H=cats.length*rowH+10,m={l:96,r:60,t:4,b:4};
+  const svg=sv('svg',{viewBox:`0 0 ${Wd} ${H}`,role:'img'},el);
+  cats.forEach((c,i)=>{
+    const y0=m.t+i*rowH;
+    const lab=sv('text',{x:m.l-8,y:y0+rowH/2+8,'text-anchor':'end'},svg);lab.textContent=c;
+    [['de',de[i]],['it',it[i]]].forEach(([cls,v],k)=>{
+      const w=(v/max)*(Wd-m.l-m.r);
+      const rect=sv('rect',{x:m.l,y:y0+k*11,width:w,height:9,rx:2,fill:css('--'+cls)},svg);
+      const t=sv('text',{x:m.l+w+6,y:y0+k*11+8,style:'fill:'+css('--ink-2')},svg);t.textContent='€'+v.toFixed(2);
+      rect.addEventListener('mousemove',e=>showTip('<div class="t">'+c+'</div>'+(cls==='de'?'독일':'이탈리아')+' CAC <b>€'+v.toFixed(2)+'</b>',e.clientX,e.clientY));
+      rect.addEventListener('mouseleave',hideTip);
+    });
+  });
+  el.appendChild(svg);
+}
+
+vendorBars(document.getElementById('vendorBars'));
+demandChart(document.getElementById('demandChart'));
+scatterChart(document.getElementById('scatterDE'),SC.DE.demand,SC.DE.spend,css('--de'));
+scatterChart(document.getElementById('scatterIT'),SC.IT.demand,SC.IT.spend,css('--it'));
+quintileBars(document.getElementById('quintileBars'));
+
+function redraw(){
+  vendorBars(document.getElementById('vendorBars'));
+  demandChart(document.getElementById('demandChart'));
+  scatterChart(document.getElementById('scatterDE'),SC.DE.demand,SC.DE.spend,css('--de'));
+  scatterChart(document.getElementById('scatterIT'),SC.IT.demand,SC.IT.spend,css('--it'));
+  quintileBars(document.getElementById('quintileBars'));
+}
+const mq=matchMedia('(prefers-color-scheme: dark)');
+mq.addEventListener&&mq.addEventListener('change',redraw);
+new MutationObserver(redraw).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+})();
+</script>

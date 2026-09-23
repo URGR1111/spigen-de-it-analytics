@@ -1,0 +1,311 @@
+<title>Spigen Question Board</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --bg:#0b1322; --card:#131f38; --card-2:#18274a; --line:rgba(255,255,255,.07);
+  --ink:#eef2f8; --ink-2:#c3cbdc; --ink-dim:#8b96ab; --ink-muted:#5c6b85;
+  --teal:#4fd1c5; --teal-dim:#2c8f86; --amber:#e0b15c; --amber-dim:#a17f3f; --red:#e0575c; --red-bg:rgba(224,87,92,.14);
+  --sans:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14px;padding-inline:16px;padding-block:0 48px}
+.wrap{max-width:1220px;margin:0 auto}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+header.top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding-block:28px 6px;flex-wrap:wrap}
+.htitle h1{font-size:26px;font-weight:700;letter-spacing:-.015em;margin:0}
+.htitle p{margin:4px 0 0;font-size:12.5px;color:var(--ink-dim)}
+.htitle .tag{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px;margin-left:8px;vertical-align:2px}
+.tag.real{background:rgba(79,209,197,.15);color:var(--teal)}
+.tag.synth{background:rgba(224,177,92,.15);color:var(--amber)}
+.hlinks{display:flex;gap:22px;padding-top:6px}
+.hlinks button{background:none;border:0;font:inherit;font-size:14px;font-weight:600;color:var(--ink-dim);cursor:pointer;padding:0}
+.hlinks button.active{color:var(--teal)}
+
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-block:20px}
+.kpi{background:var(--card);border-radius:14px;padding:18px 20px;display:grid;gap:8px}
+.kpi .lab{font-size:13px;color:var(--ink-dim)}
+.kpi .val{font-size:29px;font-weight:700;letter-spacing:-.02em;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.kpi .val .unit{font-size:15px;font-weight:500;color:var(--ink-2)}
+.delta{font-size:12.5px;font-weight:600;display:inline-flex;align-items:center;gap:2px}
+.delta.up{color:var(--red)} .delta.down{color:var(--teal)}
+.kpi .sub{font-size:11.5px;color:var(--ink-muted)}
+
+.grid{display:grid;gap:14px;margin-bottom:14px}
+.grid.c2{grid-template-columns:1.2fr 1fr}
+.grid.c3{grid-template-columns:1fr 1fr 1fr}
+.card{background:var(--card);border-radius:14px;padding:20px 22px;display:grid;gap:4px;align-content:start;min-width:0}
+.card h3{font-size:15.5px;font-weight:600;line-height:1.4;margin:0 0 2px;color:var(--ink)}
+.card h3 b{color:var(--teal);font-weight:700}
+.card .note{font-size:11.5px;color:var(--ink-muted);margin-bottom:8px}
+.chart{position:relative;width:100%}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.chart text{font-size:9.5px;fill:var(--ink-muted)}
+.chart .gridl{stroke:rgba(255,255,255,.05);stroke-width:1}
+.chart .base{stroke:rgba(255,255,255,.12);stroke-width:1}
+.chart .mark{fill:#fff;opacity:.04}
+.legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:8px;font-size:11.5px;color:var(--ink-2)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:9px;height:9px;border-radius:50%;flex:none}
+.callout{position:absolute;font-family:var(--mono);font-size:13px;font-weight:600;color:var(--teal)}
+
+#tip{position:fixed;pointer-events:none;background:#f4f6fa;color:#0b1322;font-size:11.5px;line-height:1.5;padding:7px 10px;border-radius:7px;z-index:50;max-width:230px;opacity:0;transition:opacity .08s;font-weight:500}
+#tip .t{font-family:var(--mono);font-size:10.5px;opacity:.6;margin-bottom:2px}
+
+footer.src{margin-top:26px;padding-top:16px;border-top:1px solid var(--line);font-size:11.5px;color:var(--ink-muted)}
+footer.src p{margin:0;max-width:100ch}
+
+@media (max-width:900px){
+  .kpi-row{grid-template-columns:1fr 1fr}
+  .grid.c2,.grid.c3{grid-template-columns:1fr}
+}
+@media (max-width:520px){
+  .kpi-row{grid-template-columns:1fr}
+}
+</style>
+
+<div class="wrap">
+<header class="top">
+  <div class="htitle">
+    <h1>수요와 예산, 서로를 따라가고 있는가</h1>
+    <p>독일·이탈리아 퍼포먼스 마케팅 진단 <span class="tag real">● 실측</span><span class="tag synth">● 합성</span></p>
+  </div>
+  <div class="hlinks">
+    <button id="btn-filter" onclick="toggleMarket()">Filters · <span id="mkt-label">전체</span></button>
+    <button onclick="location.href='https://claude.ai/artifact/HDqqZd6X3hndtnxGf5iTCX'" style="color:var(--ink-dim)">Menu</button>
+  </div>
+</header>
+
+<div class="kpi-row">
+  <div class="kpi">
+    <div class="lab">수요-지출 배분 격차 (상위 8주)</div>
+    <div class="val" id="kv-gap">5.4<span class="unit">%p</span></div>
+    <div class="delta up" id="kd-gap">▲ 개입 필요</div>
+    <div class="sub">실측 수요 + 합성 지출 비교</div>
+  </div>
+  <div class="kpi">
+    <div class="lab">지출-수요 탄력성 (R²)</div>
+    <div class="val" id="kv-r2">0.032</div>
+    <div class="delta up">▲ 사실상 무관</div>
+    <div class="sub">0에 가까울수록 무관계</div>
+  </div>
+  <div class="kpi">
+    <div class="lab">재배분 시 예상 신규고객 증가</div>
+    <div class="val" id="kv-uplift">+1.44<span class="unit">%</span></div>
+    <div class="delta down">▼ 총예산 동일 조건</div>
+    <div class="sub">탄력성 가정 b=0.5</div>
+  </div>
+  <div class="kpi">
+    <div class="lab">수요 최상위 분위 CAC 개선</div>
+    <div class="val" id="kv-cac">-36<span class="unit">%</span></div>
+    <div class="delta down">▼ 최하위 분위 대비</div>
+    <div class="sub">독일 기준, 이탈리아 -45%</div>
+  </div>
+</div>
+
+<div class="grid c2">
+  <div class="card">
+    <h3>지출은 정말 <b>수요와 무관</b>하게 움직이는가?</h3>
+    <div class="note">점 하나 = 한 주 · 점선 = 회귀선 · <span class="mono">R²=0.032(DE) / 0.001(IT)</span></div>
+    <div class="chart" id="c-scatter"></div>
+    <div class="legend"><span><i style="background:var(--teal)"></i>독일</span><span><i style="background:var(--amber)"></i>이탈리아</span></div>
+  </div>
+  <div class="card">
+    <h3>수요는 <b>언제</b> 몰리는가?</h3>
+    <div class="note">자국 최고 주=100 · 음영은 블랙프라이데이·크리스마스·아이폰 공개 주</div>
+    <div class="chart" id="c-demand"></div>
+    <div class="legend"><span><i style="background:var(--teal)"></i>독일 'Handyhülle'</span><span><i style="background:var(--amber)"></i>이탈리아 'cover iPhone'</span></div>
+  </div>
+</div>
+
+<div class="grid c3">
+  <div class="card">
+    <h3>수요 구간별 <b>효율 차이</b>가 있는가?</h3>
+    <div class="note">수요 5분위별 CAC(€)</div>
+    <div class="chart" id="c-quintile"></div>
+  </div>
+  <div class="card">
+    <h3>채널 <b>지출</b>과 <b>효율</b>은 같이 가는가?</h3>
+    <div class="note">지출 비중(%) vs LTV/CAC(×)</div>
+    <div class="chart" id="c-channel"></div>
+  </div>
+  <div class="card">
+    <h3>어떤 채널이 <b style="color:var(--red)">저효율</b> 위험군인가?</h3>
+    <div class="note">지출 비중 대비 LTV/CAC 분산</div>
+    <div class="chart" id="c-risk"></div>
+    <div class="legend"><span><i style="background:var(--ink-dim)"></i>일반 채널</span><span><i style="background:var(--red)"></i>저효율·고지출</span></div>
+  </div>
+</div>
+
+<footer class="src">
+  <p>실측: Google Trends 검색 수요지수(DE·IT). 합성: spigen-synthetic-data 시뮬레이션(고객 30,000명, Python) — 지출·CAC·LTV·채널 효율은 전부 합성 데이터이며 실제 슈피겐 데이터가 아닙니다. 상단 Filters로 시장을 좁혀도 다른 시장은 지우지 않고 흐리게 표시합니다.</p>
+</footer>
+</div>
+
+<div id="tip" role="tooltip"></div>
+
+<script>
+(function(){
+const tip=document.getElementById('tip');
+function showTip(html,x,y){tip.innerHTML=html;tip.style.opacity=1;const r=tip.getBoundingClientRect();let L=x+14,T=y+14;if(L+r.width>innerWidth-8)L=x-r.width-14;if(T+r.height>innerHeight-8)T=y-r.height-14;tip.style.left=Math.max(8,L)+'px';tip.style.top=Math.max(8,T)+'px';}
+function hideTip(){tip.style.opacity=0}
+const NS='http://www.w3.org/2000/svg';
+function sv(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+
+let market='all';
+const ORDER=['all','DE','IT'], LABEL={all:'전체',DE:'독일만',IT:'이탈리아만'};
+function toggleMarket(){ market=ORDER[(ORDER.indexOf(market)+1)%ORDER.length]; document.getElementById('mkt-label').textContent=LABEL[market]; draw(); }
+window.toggleMarket=toggleMarket;
+function dim(key){ return (market!=='all'&&market!==key) ? .22 : 1; }
+
+/* ============ DATA ============ */
+const SC={DE:{demand:[0.875,1.049,1.069,1.042,1.015,0.961,0.914,0.986,0.98,0.937,0.97,1.142,1.36,1.269,1.247,1.146,1.335,1.073,0.951,0.982,0.903,0.926,0.962,0.919,0.923,0.844,0.9,0.91,0.907,0.91,0.927,0.867,0.927,0.913,0.837,0.891,0.903,0.894,0.913,0.894,0.876,0.846,0.856,0.844,0.982,0.953,0.939,0.942,0.965,0.925,0.935,0.942],
+  spend:[1426,1480,1501,1431,1419,1406,1381,1409,1426,1514,1473,1510,1532,1445,1492,1466,1445,1448,1426,1492,1488,1494,1611,1607,1658,1654,1474,1507,1508,1541,1526,1549,1510,1564,1513,1491,1493,1477,1523,1564,1583,1588,1528,1528,1562,1536,1553,1539,1566,1540,1558,1606]},
+ IT:{demand:[0.931,1.072,1.033,1.066,1.038,0.925,0.965,0.948,0.965,0.908,0.993,1.044,1.213,1.219,1.326,1.326,1.636,1.253,1.089,1.072,1.055,0.948,0.914,0.869,0.79,0.796,0.824,0.886,0.835,0.796,0.711,0.779,0.796,0.745,0.728,0.756,0.728,0.733,0.717,0.711,0.728,0.762,0.756,0.801,0.976,0.987,0.965,0.908,0.954,0.841,0.92,0.863],
+  spend:[774,818,807,800,781,803,795,786,806,816,813,818,810,797,793,817,800,811,818,798,783,818,905,884,910,886,821,828,831,840,835,840,814,846,854,820,863,819,832,865,877,879,858,866,836,833,839,858,845,875,841,869]}};
+const deGen=[64,68,69,67,67,65,62,69,67,64,67,79,93,86,87,79,90,74,66,71,62,64,69,64,65,58,62,63,63,63,65,60,64,64,59,63,64,63,65,63,63,61,62,60,70,67,67,68,70,68,69,69,67,74,69,77,71,70,74,69,66,78,77,92,100,98,90,90,100,83,73,69,69,65,68,62,60,60,72,72,68,66,64,61,60,62,61,62,70,60,60,69,67,57,52,59,66,62,68,68,68,68,78,72,73,76,75];
+const itIph=[48,57,55,57,55,48,51,50,51,48,52,54,63,64,70,71,87,66,58,57,56,49,47,45,41,41,43,47,43,41,37,41,41,39,38,40,38,38,37,37,37,39,39,42,51,52,50,47,49,43,47,44,43,64,69,77,61,61,55,54,56,60,60,62,69,74,78,83,100,80,70,64,59,55,60,65,65,58,48,51,50,52,47,42,48,43,43,47,45,43,50,52,44,40,40,40,46,44,48,50,50,53,54,59,53,68,72];
+const EVMARK=(()=>{const START=Date.UTC(2024,8,1),W=7*864e5;const idx=s=>Math.round((Date.UTC(...s.split('-').map((v,i)=>i===1?v-1:+v))-START)/W);
+  return [idx('2024-09-08'),idx('2025-09-07'),idx('2026-09-06'),idx('2024-11-24'),idx('2025-11-23'),idx('2024-12-22'),idx('2025-12-21')];})();
+const QUINTILE={DE:[17.15,15.01,14.87,13.66,10.89],IT:[15.42,12.95,10.58,10.17,8.47]};
+const CHANNELS={
+  DE:[{name:'Meta 광고',share:47.0,ltvcac:4.24},{name:'Google 검색',share:34.2,ltvcac:6.35},{name:'TikTok 광고',share:11.4,ltvcac:4.76},{name:'인플루언서',share:7.5,ltvcac:4.43}],
+  IT:[{name:'Meta 광고',share:53.0,ltvcac:5.42},{name:'Google 검색',share:30.7,ltvcac:7.70},{name:'TikTok 광고',share:3.9,ltvcac:5.27},{name:'인플루언서',share:12.4,ltvcac:5.47}]
+};
+const KPI={DE:{gap:5.4,r2:0.032,uplift:1.44},IT:{gap:6.3,r2:0.001,uplift:1.96}};
+
+/* ============ chart helpers ============ */
+function scatterChart(el){
+  el.innerHTML='';
+  const Wd=520,H=200,m={l:36,r:14,t:10,b:20};
+  const svg=sv('svg',{viewBox:`0 0 ${Wd} ${H}`,role:'img'},el);
+  const all=[...SC.DE.demand,...SC.IT.demand];
+  const xMin=Math.min(...all)*.95,xMax=Math.max(...all)*1.03;
+  const yMax=Math.max(...SC.DE.spend,...SC.IT.spend)*1.1;
+  const x=v=>m.l+(v-xMin)/(xMax-xMin)*(Wd-m.l-m.r), y=v=>m.t+(1-v/yMax)*(H-m.t-m.b);
+  [0,.5,1].forEach(f=>{const v=yMax*f; sv('line',{x1:m.l,x2:Wd-m.r,y1:y(v),y2:y(v),class:f===0?'base':'gridl'},svg);
+    const t=sv('text',{x:m.l-6,y:y(v)+3,'text-anchor':'end'},svg);t.textContent=Math.round(v);});
+  [['DE',SC.DE,'--teal','teal'],['IT',SC.IT,'--amber','amber']].forEach(([key,d,varname])=>{
+    const color=getComputedStyle(document.documentElement).getPropertyValue(varname==='teal'?'--teal':'--amber').trim();
+    const nn=d.demand.length, mx=d.demand.reduce((a,b)=>a+b,0)/nn, my=d.spend.reduce((a,b)=>a+b,0)/nn;
+    let num=0,den=0; for(let i=0;i<nn;i++){num+=(d.demand[i]-mx)*(d.spend[i]-my); den+=(d.demand[i]-mx)**2;}
+    const slope=num/den, intercept=my-slope*mx;
+    sv('path',{d:`M${x(xMin)} ${y(slope*xMin+intercept)} L${x(xMax)} ${y(slope*xMax+intercept)}`,fill:'none',stroke:color,'stroke-width':1.5,'stroke-dasharray':'5 4',opacity:.55*dim(key)},svg);
+    d.demand.forEach((xv,i)=>{
+      const c=sv('circle',{cx:x(xv),cy:y(d.spend[i]),r:3,fill:color,opacity:.75*dim(key)},svg);
+      c.addEventListener('mousemove',e=>showTip('<div class="t">'+(key==='DE'?'독일':'이탈리아')+'</div>수요 '+xv.toFixed(2)+' · 지출 <b>€'+Math.round(d.spend[i]).toLocaleString()+'</b>',e.clientX,e.clientY));
+      c.addEventListener('mouseleave',hideTip);
+    });
+  });
+  el.appendChild(svg);
+}
+
+function demandChart(el){
+  el.innerHTML='';
+  const Wd=520,H=200,m={l:26,r:10,t:10,b:18};
+  const n=deGen.length;
+  const svg=sv('svg',{viewBox:`0 0 ${Wd} ${H}`,role:'img'},el);
+  const x=i=>m.l+i*(Wd-m.l-m.r)/(n-1), y=v=>m.t+(1-v/100)*(H-m.t-m.b);
+  EVMARK.forEach(i=>sv('rect',{x:x(i)-2,y:m.t,width:4,height:H-m.t-m.b,class:'mark'},svg));
+  [0,50,100].forEach(v=>{sv('line',{x1:m.l,x2:Wd-m.r,y1:y(v),y2:y(v),class:v===0?'base':'gridl'},svg);
+    const t=sv('text',{x:m.l-4,y:y(v)+3,'text-anchor':'end'},svg);t.textContent=v;});
+  [[deGen,'DE','--teal'],[itIph,'IT','--amber']].forEach(([arr,key])=>{
+    const color=getComputedStyle(document.documentElement).getPropertyValue(key==='DE'?'--teal':'--amber').trim();
+    const d=arr.map((v,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(v).toFixed(1)).join(' ');
+    sv('path',{d,fill:'none',stroke:color,'stroke-width':2,opacity:dim(key)},svg);
+  });
+  const hit=sv('rect',{x:m.l,y:0,width:Wd-m.l-m.r,height:H,fill:'transparent'},svg);
+  hit.addEventListener('mousemove',e=>{
+    const r=svg.getBoundingClientRect();const px=(e.clientX-r.left)/r.width*Wd;
+    const i=Math.max(0,Math.min(n-1,Math.round((px-m.l)/((Wd-m.l-m.r)/(n-1)))));
+    showTip('<div class="t">'+(i+1)+'주차</div>독일 <b>'+deGen[i]+'</b><br>이탈리아 <b>'+itIph[i]+'</b>',e.clientX,e.clientY);
+  });
+  hit.addEventListener('mouseleave',hideTip);
+  el.appendChild(svg);
+}
+
+function hbars(el,{cats,series,max,unit,dec}){
+  el.innerHTML='';
+  const Wd=340,rowH=series.length>1?22:18,gap=6,H=cats.length*(rowH*series.length+gap)+4,m={l:66,r:46,t:2,b:2};
+  const svg=sv('svg',{viewBox:`0 0 ${Wd} ${H}`,role:'img'},el);
+  let y0=m.t;
+  cats.forEach((c)=>{
+    const lab=sv('text',{x:m.l-8,y:y0+(series.length*rowH)/2+3.5,'text-anchor':'end'},svg);lab.textContent=c;
+    series.forEach((s,si)=>{
+      const v=s.values[cats.indexOf(c)];
+      const w=(v/max)*(Wd-m.l-m.r);
+      const yy=y0+si*rowH;
+      const rect=sv('rect',{x:m.l,y:yy,width:Math.max(2,w),height:rowH-6,rx:3,fill:s.color,opacity:(s.dim!=null?s.dim:1)},svg);
+      const t=sv('text',{x:m.l+w+6,y:yy+(rowH-6)/2+3.5,style:'fill:'+getComputedStyle(document.documentElement).getPropertyValue('--ink-2')},svg);t.textContent=(dec!=null?v.toFixed(dec):v)+(unit||'');
+      rect.addEventListener('mousemove',e=>showTip('<div class="t">'+c+'</div>'+s.name+' <b>'+(dec!=null?v.toFixed(dec):v)+(unit||'')+'</b>',e.clientX,e.clientY));
+      rect.addEventListener('mouseleave',hideTip);
+    });
+    y0+=series.length*rowH+gap;
+  });
+  el.appendChild(svg);
+}
+
+function channelBars(el,rows){
+  el.innerHTML='';
+  const ink2=getComputedStyle(document.documentElement).getPropertyValue('--ink-2').trim();
+  const teal=getComputedStyle(document.documentElement).getPropertyValue('--teal').trim();
+  const inkDim=getComputedStyle(document.documentElement).getPropertyValue('--ink-dim').trim();
+  const sorted=rows.slice().sort((a,b)=>b.share-a.share);
+  const max=60, Wd=340, rowH=30, H=sorted.length*rowH+4, m={l:74,r:56,t:2,b:2};
+  const svg=sv('svg',{viewBox:`0 0 ${Wd} ${H}`,role:'img'},el);
+  sorted.forEach((r,i)=>{
+    const y0=m.t+i*rowH;
+    const lab=sv('text',{x:m.l-8,y:y0+14,'text-anchor':'end'},svg);lab.textContent=r.name;
+    const w=(r.share/max)*(Wd-m.l-m.r);
+    const rect=sv('rect',{x:m.l,y:y0+3,width:Math.max(2,w),height:12,rx:3,fill:inkDim},svg);
+    const t=sv('text',{x:m.l+w+6,y:y0+12,style:'fill:'+ink2},svg);t.textContent=r.share.toFixed(1)+'%';
+    const badge=sv('text',{x:Wd-m.r+2,y:y0+12,style:'fill:'+teal+';font-weight:600'},svg);badge.textContent=r.ltvcac.toFixed(2)+'×';
+    rect.addEventListener('mousemove',e=>showTip('<div class="t">'+r.name+'</div>지출비중 <b>'+r.share.toFixed(1)+'%</b><br>LTV/CAC <b>'+r.ltvcac.toFixed(2)+'×</b>',e.clientX,e.clientY));
+    rect.addEventListener('mouseleave',hideTip);
+  });
+  el.appendChild(svg);
+}
+
+function riskScatter(el){
+  el.innerHTML='';
+  const Wd=340,H=190,m={l:36,r:14,t:12,b:22};
+  const svg=sv('svg',{viewBox:`0 0 ${Wd} ${H}`,role:'img'},el);
+  const rows=[...CHANNELS.DE.map(c=>({...c,key:'DE'})),...CHANNELS.IT.map(c=>({...c,key:'IT'}))];
+  const xMax=60,yMax=8;
+  const x=v=>m.l+(v/xMax)*(Wd-m.l-m.r), y=v=>m.t+(1-v/yMax)*(H-m.t-m.b);
+  [0,.5,1].forEach(f=>{const v=yMax*f; sv('line',{x1:m.l,x2:Wd-m.r,y1:y(v),y2:y(v),class:f===0?'base':'gridl'},svg);
+    const t=sv('text',{x:m.l-5,y:y(v)+3,'text-anchor':'end'},svg);t.textContent=v;});
+  const worst=rows.reduce((a,b)=>a.ltvcac<b.ltvcac?a:b);
+  rows.forEach(r=>{
+    const risky = r===worst || (r.share>40 && r.ltvcac<5);
+    const color=risky?getComputedStyle(document.documentElement).getPropertyValue('--red').trim():getComputedStyle(document.documentElement).getPropertyValue('--ink-dim').trim();
+    const c=sv('circle',{cx:x(r.share),cy:y(r.ltvcac),r:risky?6:4.5,fill:color,opacity:dim(r.key)},svg);
+    c.addEventListener('mousemove',e=>showTip('<div class="t">'+(r.key==='DE'?'독일':'이탈리아')+' · '+r.name+'</div>지출비중 '+r.share.toFixed(1)+'% · LTV/CAC <b>'+r.ltvcac.toFixed(2)+'×</b>',e.clientX,e.clientY));
+    c.addEventListener('mouseleave',hideTip);
+  });
+  const t1=sv('text',{x:m.l,y:H-4,style:'fill:'+getComputedStyle(document.documentElement).getPropertyValue('--ink-muted')},svg);t1.textContent='지출 비중(%) →';
+  el.appendChild(svg);
+}
+
+function draw(){
+  const k = market==='all' ? {gap:(KPI.DE.gap+KPI.IT.gap)/2, r2:(KPI.DE.r2+KPI.IT.r2)/2, uplift:(KPI.DE.uplift+KPI.IT.uplift)/2} : KPI[market];
+  document.getElementById('kv-gap').innerHTML=k.gap.toFixed(1)+'<span class="unit">%p</span>';
+  document.getElementById('kv-r2').textContent=k.r2.toFixed(3);
+  document.getElementById('kv-uplift').innerHTML='+'+k.uplift.toFixed(2)+'<span class="unit">%</span>';
+  document.getElementById('kv-cac').innerHTML=(market==='IT'?'-45':'-36')+'<span class="unit">%</span>';
+
+  scatterChart(document.getElementById('c-scatter'));
+  demandChart(document.getElementById('c-demand'));
+  hbars(document.getElementById('c-quintile'),{cats:['Q1 최저','Q2','Q3','Q4','Q5 최고'],
+    series:[{name:'독일',color:getComputedStyle(document.documentElement).getPropertyValue('--teal').trim(),values:QUINTILE.DE,dim:dim('DE')},
+             {name:'이탈리아',color:getComputedStyle(document.documentElement).getPropertyValue('--amber').trim(),values:QUINTILE.IT,dim:dim('IT')}],max:18,unit:'€',dec:2});
+  const chRows = market==='IT' ? CHANNELS.IT : CHANNELS.DE;
+  channelBars(document.getElementById('c-channel'),chRows);
+  riskScatter(document.getElementById('c-risk'));
+}
+draw();
+})();
+</script>

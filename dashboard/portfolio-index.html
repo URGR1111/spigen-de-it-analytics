@@ -1,0 +1,212 @@
+<title>Spigen EU Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --bg:#f1f2ef; --surface:#ffffff; --surface-2:#f7f8f6;
+  --ink:#15171a; --ink-2:#4b5057; --muted:#7b8189; --line:#e0e2de; --grid:#eceeea;
+  --de:#2a78d6; --it:#eb6834; --grey-series:#a9aeb4;
+  --good:#1a7f4b; --warn:#b26a00; --crit:#c2352f;
+  --good-bg:#e5f3ea; --warn-bg:#fbf0dc; --crit-bg:#fbe6e4;
+  --synth:#7c5cbf; --synth-bg:#efe9f8;
+  --sans:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#121416; --surface:#1b1e21; --surface-2:#22262a;
+    --ink:#f2f3f1; --ink-2:#c1c5c9; --muted:#8e949b; --line:#2e3338; --grid:#262a2e;
+    --de:#3987e5; --it:#d95926; --grey-series:#6c737a;
+    --good:#5fc48f; --warn:#e3a33b; --crit:#ef7a73;
+    --good-bg:#17301f; --warn-bg:#33270f; --crit-bg:#3a1a18;
+    --synth:#a98ee0; --synth-bg:#2b2438;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#121416; --surface:#1b1e21; --surface-2:#22262a;
+  --ink:#f2f3f1; --ink-2:#c1c5c9; --muted:#8e949b; --line:#2e3338; --grid:#262a2e;
+  --de:#3987e5; --it:#d95926; --grey-series:#6c737a;
+  --good:#5fc48f; --warn:#e3a33b; --crit:#ef7a73;
+  --good-bg:#17301f; --warn-bg:#33270f; --crit-bg:#3a1a18;
+  --synth:#a98ee0; --synth-bg:#2b2438;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.65;margin:0;padding-inline:16px;padding-block:0 72px}
+.wrap{max-width:1040px;margin:0 auto}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+h1,h2,h3{text-wrap:balance;margin:0}
+a{color:inherit}
+.sw{display:inline-block;width:10px;height:10px;border-radius:2px;flex:none;margin-right:6px}
+.sw.de{background:var(--de)} .sw.it{background:var(--it)} .sw.synth{background:var(--synth)}
+
+header.top{padding-block:52px 30px;display:grid;gap:18px;border-bottom:1px solid var(--line)}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h1{font-size:clamp(26px,4.2vw,42px);line-height:1.22;font-weight:700;letter-spacing:-.015em;max-width:20ch}
+.lede{color:var(--ink-2);max-width:66ch;margin:0;font-size:16px}
+.meta{display:flex;flex-wrap:wrap;gap:8px 20px;font-size:13px;color:var(--muted);margin-top:4px}
+
+.goals{padding-block:36px 8px}
+.goals h2{font-size:13px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:18px}
+.goal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.goal{background:var(--surface);padding:22px 20px;display:grid;gap:8px;align-content:start}
+.goal .n{font-family:var(--mono);font-size:12px;color:var(--synth);font-weight:600}
+.goal h3{font-size:15.5px;font-weight:700}
+.goal p{margin:0;font-size:13.5px;color:var(--ink-2);line-height:1.6}
+
+.story{padding-block:44px 8px;position:relative}
+.story h2{font-size:13px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:22px}
+.steps{position:relative;display:grid;gap:16px}
+.steps::before{content:"";position:absolute;left:27px;top:8px;bottom:8px;width:2px;background:var(--line)}
+.step{position:relative;display:grid;grid-template-columns:56px 1fr;gap:0;align-items:stretch}
+.step-dot{width:56px;flex:none;display:flex;align-items:flex-start;justify-content:center;padding-top:22px;position:relative;z-index:1}
+.step-dot span{width:34px;height:34px;border-radius:50%;background:var(--surface);border:2px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:13px;font-weight:600;color:var(--ink-2)}
+.step-card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px 24px;display:grid;gap:10px;margin-bottom:2px;transition:border-color .15s}
+.step-card:hover{border-color:var(--synth)}
+.step-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.step-kicker{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.03em}
+.step-card h3{font-size:18px;font-weight:700;letter-spacing:-.01em;margin-top:2px}
+.step-card p{margin:0;color:var(--ink-2);font-size:14px;max-width:68ch}
+.stat-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:2px}
+.stat{background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:6px 11px;font-size:12.5px;color:var(--ink-2);display:flex;align-items:center;gap:6px}
+.stat b{font-family:var(--mono);color:var(--ink);font-weight:600}
+.tags{display:flex;gap:6px;flex-wrap:wrap}
+.tag{font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:999px;letter-spacing:.02em}
+.tag.real{background:var(--good-bg);color:var(--good)}
+.tag.synth{background:var(--synth-bg);color:var(--synth)}
+.step-cta{margin-top:6px;display:inline-flex;align-items:center;gap:6px;font-size:13.5px;font-weight:600;color:var(--synth)}
+.step-cta svg{width:14px;height:14px}
+
+footer.src{margin-top:52px;padding-top:22px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted);display:grid;gap:10px}
+footer.src p{margin:0;max-width:88ch}
+footer.src .links{display:flex;flex-wrap:wrap;gap:10px 18px;font-size:12.5px}
+footer.src .links a{color:var(--ink-2);text-decoration:underline;text-underline-offset:2px}
+
+@media (max-width:760px){
+  .goal-grid{grid-template-columns:1fr}
+  .step{grid-template-columns:40px 1fr}
+  .step-dot{width:40px}
+  .step-dot span{width:28px;height:28px;font-size:11.5px}
+  .steps::before{left:19px}
+}
+</style>
+
+<div class="wrap">
+<header class="top">
+  <div class="eyebrow">Spigen · Global Performance Marketing · 신입 인턴 지원 포트폴리오</div>
+  <h1>유럽 시장에서 예산과 수요가 어긋나는 지점을, 데이터로 찾아봤습니다</h1>
+  <p class="lede">독일·이탈리아 두 시장을 실측 데이터로 조사하고, 문제를 원인 단위로 쪼개고, 합성 데이터로 직접 검증한 뒤, 운영 도구까지 설계했습니다. 아래 4단계는 제가 이 문제를 실제로 풀어간 순서 그대로입니다.</p>
+  <div class="meta">
+    <span><i class="sw de"></i>독일 (DE)</span>
+    <span><i class="sw it"></i>이탈리아 (IT)</span>
+    <span><i class="sw synth"></i>합성 데이터 표시</span>
+    <span>기준일 <b class="mono">2026-09-23</b></span>
+  </div>
+</header>
+
+<section class="goals">
+  <h2>이 포트폴리오로 보여드리고 싶은 것 3가지</h2>
+  <div class="goal-grid">
+    <div class="goal">
+      <div class="n">01</div>
+      <h3>데이터를 직접 다뤄본 경험</h3>
+      <p>Statcounter·Google Trends·Meta·TikTok·Amazon에서 실측 데이터 5종을 직접 수집했고, Python으로 30,000명 규모 합성 고객 데이터 파이프라인을 처음부터 설계·구현했습니다.</p>
+    </div>
+    <div class="goal">
+      <div class="n">02</div>
+      <h3>진출 시장(유럽)에 대한 깊은 고민</h3>
+      <p>독일과 이탈리아를 같은 유럽이라고 뭉뚱그리지 않고, 기기 구성·검색 습관·구매 시즌이 다르다는 걸 실측으로 규명하고 시장별로 다른 전략을 설계했습니다.</p>
+    </div>
+    <div class="goal">
+      <div class="n">03</div>
+      <h3>실제 분석 역량</h3>
+      <p>회귀·상관분석, RFM, 코호트 리텐션, A/B 테스트, K-Means, Prophet 시계열 예측을 직접 수행하고, 그 결과를 의사결정으로 이어지는 화면으로 설계했습니다.</p>
+    </div>
+  </div>
+</section>
+
+<section class="story">
+  <h2>4단계로 풀어간 과정</h2>
+  <div class="steps">
+
+    <div class="step">
+      <div class="step-dot"><span>01</span></div>
+      <a class="step-card" href="https://claude.ai/artifact/Bobp7NK2DY1P4FNcSYdm2b" target="_blank" rel="noopener">
+        <div class="step-top">
+          <div><div class="step-kicker">STEP 1 · 시장 조사</div><h3>DE·IT Growth Radar</h3></div>
+          <span class="tag real">실측 데이터</span>
+        </div>
+        <p>기기 점유율·검색 수요·브랜드 인지도·광고 라이브러리·베스트셀러까지 5종 공개 데이터로 두 시장의 진짜 차이를 확인했습니다. 문제를 만들기 전에, 먼저 시장을 이해하는 단계입니다.</p>
+        <div class="stat-row">
+          <span class="stat">독일 18–24세 Meta 도달 <b>0.9%</b></span>
+          <span class="stat">이탈리아 TikTok 광고 <b>0건</b></span>
+          <span class="stat">슈피겐 Amazon 최고 순위 <b>#21</b></span>
+        </div>
+        <span class="step-cta">3개 탭 보기 (시장기회 · 예산배분 · 분석역량) <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M7 7h10v10"/></svg></span>
+      </a>
+    </div>
+
+    <div class="step">
+      <div class="step-dot"><span>02</span></div>
+      <a class="step-card" href="https://claude.ai/artifact/FgPKVnuZHhNf6kKuiNAszP" target="_blank" rel="noopener">
+        <div class="step-top">
+          <div><div class="step-kicker">STEP 2 · 원인 분석</div><h3>수요-예산 미스매치 원인 트리</h3></div>
+          <span class="tag synth">합성 시뮬레이션</span>
+        </div>
+        <p>"예산이 부족하다"는 막연한 문제를 Plan·Execute·Check 3개 MECE 원인으로 쪼개고, 각 원인마다 유저 측면·비즈니스 측면 해결방안과 목표 지표를 연결한 Hierarchy입니다.</p>
+        <div class="stat-row">
+          <span class="stat">원인1 <b>3개</b> · 원인2 <b>6개</b></span>
+          <span class="stat">해결방안 <b>6개</b> (User/Biz 쌍)</span>
+        </div>
+        <span class="step-cta">원인 트리 다이어그램 보기 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M7 7h10v10"/></svg></span>
+      </a>
+    </div>
+
+    <div class="step">
+      <div class="step-dot"><span>03</span></div>
+      <a class="step-card" href="https://claude.ai/artifact/QTLcHFkp26aS62fvZzjfE3" target="_blank" rel="noopener">
+        <div class="step-top">
+          <div><div class="step-kicker">STEP 3 · 검증</div><h3>수요반응 심층분석</h3></div>
+          <span class="tag synth">합성 데이터</span>
+        </div>
+        <p>가설을 말로만 두지 않고 직접 회귀분석·상관분석으로 검증했습니다. 산점도·지수화 라인차트·채널 효율 비교로 "정말 예산이 수요와 무관한지"를 수치로 증명한 단계입니다.</p>
+        <div class="stat-row">
+          <span class="stat">지출-수요 탄력성 <b>R²=0.03</b></span>
+          <span class="stat">CTR-수요 상관계수 <b>0.79~0.88</b></span>
+          <span class="stat">DE 피크주 지출 <b>-8.6%</b></span>
+        </div>
+        <span class="step-cta">심층분석 리포트 보기 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M7 7h10v10"/></svg></span>
+      </a>
+    </div>
+
+    <div class="step">
+      <div class="step-dot"><span>04</span></div>
+      <a class="step-card" href="https://claude.ai/artifact/E3Uc8oaAUJnsYSK9Wb9MB4" target="_blank" rel="noopener">
+        <div class="step-top">
+          <div><div class="step-kicker">STEP 4 · 운영 설계</div><h3>Spigen Ops Console</h3></div>
+          <span class="tag synth">합성 데이터</span>
+        </div>
+        <p>분석은 실무자가 매주 쓸 수 있어야 의미가 있다고 생각해서, 시장·기간·채널 필터와 액션 트래커, 원본 데이터 감사 테이블까지 갖춘 실무 대시보드로 설계했습니다.</p>
+        <div class="stat-row">
+          <span class="stat">필터 <b>3종</b> 연동</span>
+          <span class="stat">액션 우선순위 <b>담당·기한</b> 포함</span>
+        </div>
+        <span class="step-cta">Ops Console 열기 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M7 7h10v10"/></svg></span>
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<footer class="src">
+  <p><b style="color:var(--ink)">실측 vs 합성 표시 원칙</b> — 초록 배지(실측)가 붙은 수치는 Statcounter·Google Trends·Meta·TikTok·Amazon 공개 데이터에서 직접 수집한 값입니다. 보라 배지(합성)가 붙은 수치는 제가 설계한 가상 고객 30,000명 데이터(spigen-synthetic-data, Python)를 분석한 결과이며, 실제 슈피겐 내부 데이터가 아닙니다. 두 성격을 한 화면·한 문장에 섞지 않는 것을 전체 작업의 원칙으로 삼았습니다.</p>
+  <div class="links">
+    <a href="https://claude.ai/artifact/Bobp7NK2DY1P4FNcSYdm2b" target="_blank" rel="noopener">01 · DE·IT Growth Radar</a>
+    <a href="https://claude.ai/artifact/FgPKVnuZHhNf6kKuiNAszP" target="_blank" rel="noopener">02 · 원인 트리</a>
+    <a href="https://claude.ai/artifact/QTLcHFkp26aS62fvZzjfE3" target="_blank" rel="noopener">03 · 심층분석</a>
+    <a href="https://claude.ai/artifact/E3Uc8oaAUJnsYSK9Wb9MB4" target="_blank" rel="noopener">04 · Ops Console</a>
+  </div>
+</footer>
+</div>

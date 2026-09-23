@@ -1,0 +1,944 @@
+<title>DE·IT Growth Radar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --bg:#f1f2ef; --surface:#ffffff; --surface-2:#f7f8f6;
+  --ink:#15171a; --ink-2:#4b5057; --muted:#7b8189; --line:#e0e2de; --grid:#eceeea;
+  --de:#2a78d6; --it:#eb6834; --grey-series:#a9aeb4;
+  --good:#1a7f4b; --warn:#b26a00; --crit:#c2352f;
+  --good-bg:#e5f3ea; --warn-bg:#fbf0dc; --crit-bg:#fbe6e4;
+  --synth:#7c5cbf; --synth-bg:#efe9f8; --synth-dash:#9c7fd4;
+  --tip-bg:#15171a; --tip-ink:#ffffff;
+  --sans:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#121416; --surface:#1b1e21; --surface-2:#22262a;
+    --ink:#f2f3f1; --ink-2:#c1c5c9; --muted:#8e949b; --line:#2e3338; --grid:#262a2e;
+    --de:#3987e5; --it:#d95926; --grey-series:#6c737a;
+    --good:#5fc48f; --warn:#e3a33b; --crit:#ef7a73;
+    --good-bg:#17301f; --warn-bg:#33270f; --crit-bg:#3a1a18;
+    --synth:#a98ee0; --synth-bg:#2b2438; --synth-dash:#8f6fce;
+    --tip-bg:#f2f3f1; --tip-ink:#15171a;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#121416; --surface:#1b1e21; --surface-2:#22262a;
+  --ink:#f2f3f1; --ink-2:#c1c5c9; --muted:#8e949b; --line:#2e3338; --grid:#262a2e;
+  --de:#3987e5; --it:#d95926; --grey-series:#6c737a;
+  --good:#5fc48f; --warn:#e3a33b; --crit:#ef7a73;
+  --good-bg:#17301f; --warn-bg:#33270f; --crit-bg:#3a1a18;
+  --synth:#a98ee0; --synth-bg:#2b2438; --synth-dash:#8f6fce;
+  --tip-bg:#f2f3f1; --tip-ink:#15171a;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.6;margin:0;padding-inline:16px;padding-block:0 64px}
+.wrap{max-width:1120px;margin:0 auto}
+a{color:inherit}
+h1,h2,h3{text-wrap:balance;margin:0}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+[hidden]{display:none!important}
+
+header.top{padding-block:32px 20px;display:grid;gap:16px;border-bottom:1px solid var(--line)}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h1{font-size:clamp(24px,3.6vw,36px);line-height:1.2;font-weight:700;letter-spacing:-.01em;max-width:24ch}
+.lede{color:var(--ink-2);max-width:70ch;margin:0}
+.meta{display:flex;flex-wrap:wrap;gap:8px 20px;font-size:13px;color:var(--muted)}
+.meta b{color:var(--ink-2);font-weight:500}
+.flag{display:inline-flex;align-items:center;gap:6px}
+.sw{display:inline-block;width:10px;height:10px;border-radius:2px;flex:none}
+.sw.de{background:var(--de)} .sw.it{background:var(--it)} .sw.synth{background:var(--synth)}
+
+.tabbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:7;background:var(--bg);border-bottom:1px solid var(--line);margin-inline:-16px;padding-inline:16px}
+.tabbar .in{max-width:1120px;margin:0 auto;display:flex;gap:6px;padding-block:10px;overflow-x:auto;scrollbar-width:none}
+.tabbtn{font:inherit;font-size:13.5px;font-weight:600;border:1px solid var(--line);background:var(--surface);color:var(--ink-2);padding:9px 16px;border-radius:9px;cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:8px;flex:none}
+.tabbtn .i{font-family:var(--mono);font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:5px;padding:0 5px}
+.tabbtn[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tabbtn[aria-selected="true"] .i{color:var(--bg);border-color:var(--ink-2)}
+.tabbtn:focus-visible{outline:2px solid var(--ink);outline-offset:1px}
+
+nav.jump{position:sticky;top:calc(env(safe-area-inset-top,0px) + 47px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line);margin-inline:-16px;padding-inline:16px}
+nav.jump .in{max-width:1120px;margin:0 auto;display:flex;gap:4px;overflow-x:auto;padding-block:8px;scrollbar-width:none}
+nav.jump a{font-size:12.5px;text-decoration:none;color:var(--ink-2);padding:5px 12px;border-radius:999px;white-space:nowrap}
+nav.jump a:hover,nav.jump a:focus-visible{background:var(--surface);color:var(--ink);outline:none}
+
+.databanner{display:flex;gap:10px;align-items:flex-start;padding:13px 16px;border-radius:10px;border:1px solid var(--line);background:var(--surface-2);font-size:13.5px;color:var(--ink-2);margin-block:22px 0}
+.databanner b{color:var(--ink)}
+.databanner .ic{font-family:var(--mono);font-size:15px;flex:none;line-height:1.5}
+
+.findings{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-block:20px 8px}
+.finding{background:var(--surface);padding:18px 18px 16px;display:grid;gap:6px;align-content:start}
+.finding .num{font-family:var(--mono);font-size:29px;font-weight:500;line-height:1.1;letter-spacing:-.02em}
+.finding .num small{font-size:13.5px;color:var(--muted);font-weight:400;margin-left:4px}
+.finding p{margin:0;font-size:13.5px;color:var(--ink-2)}
+.finding .tag{justify-self:start}
+.pill{font-size:11.5px;font-weight:600;padding:2px 8px;border-radius:999px;letter-spacing:.02em;white-space:nowrap}
+.pill.crit{background:var(--crit-bg);color:var(--crit)}
+.pill.warn{background:var(--warn-bg);color:var(--warn)}
+.pill.good{background:var(--good-bg);color:var(--good)}
+.pill.synth{background:var(--synth-bg);color:var(--synth)}
+.pill.real{background:var(--good-bg);color:var(--good)}
+
+section.block{padding-block:40px 8px;display:grid;gap:18px;scroll-margin-top:100px}
+.sec-head{display:grid;gap:6px}
+.sec-head .taghead{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.sec-head h2{font-size:21px;font-weight:700;letter-spacing:-.01em}
+.sec-head p{margin:0;color:var(--ink-2);max-width:72ch}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid-3-1{display:grid;grid-template-columns:1.7fr 1fr;gap:16px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px;display:grid;gap:12px;align-content:start;min-width:0}
+.panel h3{font-size:15px;font-weight:600}
+.panel .sub{font-size:12.5px;color:var(--muted);margin:-8px 0 0}
+.insight{border-left:2px solid var(--ink);padding:2px 0 2px 12px;display:grid;gap:4px}
+.insight.synth{border-left-color:var(--synth)}
+.insight b{font-weight:600}
+.insight p{margin:0;font-size:14px;color:var(--ink-2)}
+.list-insights{display:grid;gap:14px}
+
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--ink-2)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.lg-line{display:inline-block;width:18px;height:0;border-top:2px solid}
+.lg-line.dash{border-top-style:dashed}
+.lg-fill{display:inline-block;width:12px;height:12px;border-radius:3px}
+
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;padding:2px;background:var(--surface-2);justify-self:start}
+.seg button{font:inherit;font-size:13px;border:0;background:transparent;color:var(--ink-2);padding:4px 12px;border-radius:6px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 0 0 1px var(--line)}
+.seg button:focus-visible{outline:2px solid var(--ink);outline-offset:1px}
+
+.hbars{display:grid;gap:10px}
+.hrow{display:grid;grid-template-columns:104px 1fr;gap:10px;align-items:center}
+.hrow .lab{font-size:12.5px;color:var(--ink-2);text-align:right}
+.hrow .bars{display:grid;gap:2px}
+.bar{height:12px;border-radius:0 4px 4px 0;min-width:2px;position:relative;cursor:default}
+.bar.de{background:var(--de)} .bar.it{background:var(--it)} .bar.ink{background:var(--ink)} .bar.grey{background:var(--grey-series)}
+.bar.synth{background:var(--synth)} .bar.ctrl{background:var(--muted)}
+.bar.seq1{background:var(--muted)} .bar.seq2{background:var(--ink-2)} .bar.seq3{background:var(--ink)}
+.bar .v{position:absolute;left:calc(100% + 6px);top:50%;transform:translateY(-50%);font-family:var(--mono);font-size:11.5px;color:var(--ink-2);white-space:nowrap}
+.axis-note{font-size:12px;color:var(--muted)}
+
+.stack100{display:flex;height:22px;border-radius:4px;overflow:hidden;gap:2px}
+.stack100 div{display:flex;align-items:center;padding-left:8px;font-size:11.5px;font-family:var(--mono);color:#fff;white-space:nowrap;overflow:hidden}
+.stack100 .m{background:var(--ink-2)} .stack100 .f{background:var(--grey-series);color:var(--ink)}
+.stack-row{display:grid;grid-template-columns:92px 1fr;gap:10px;align-items:center;font-size:13px;color:var(--ink-2)}
+.stack-row > span{text-align:right}
+
+.chart{position:relative;width:100%}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.chart text{font-family:var(--mono);font-size:10.5px;fill:var(--muted)}
+.chart .gridl{stroke:var(--grid);stroke-width:1}
+.chart .base{stroke:var(--line);stroke-width:1}
+.chart .mark-band{fill:var(--ink);opacity:.05}
+.chart .mark-lab{fill:var(--ink-2);font-size:10px}
+.chart .cross{stroke:var(--ink-2);stroke-width:1;stroke-dasharray:2 3}
+
+#tip{position:fixed;pointer-events:none;background:var(--tip-bg);color:var(--tip-ink);font-size:12px;line-height:1.5;padding:8px 10px;border-radius:6px;z-index:50;max-width:270px;opacity:0;transition:opacity .08s}
+#tip .t{font-family:var(--mono);font-size:11px;opacity:.75;margin-bottom:2px}
+#tip .r{display:flex;align-items:center;gap:6px;font-variant-numeric:tabular-nums}
+#tip .r b{margin-left:auto;font-family:var(--mono);font-weight:500;padding-left:12px}
+
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:720px}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.03em;background:var(--surface-2)}
+tr:last-child td{border-bottom:0}
+td.num{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.chip{display:inline-block;font-size:11.5px;border:1px solid var(--line);border-radius:999px;padding:1px 8px;margin:2px 4px 2px 0;color:var(--ink-2);background:var(--surface-2)}
+
+.tt{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border-radius:8px;overflow:hidden;border:1px solid var(--line)}
+.tt div{background:var(--surface);padding:14px;display:grid;gap:2px}
+.tt .n{font-family:var(--mono);font-size:26px;font-weight:500}
+.tt .l{font-size:12.5px;color:var(--muted)}
+
+.gantt{display:grid;gap:6px;min-width:680px}
+.g-head,.g-row{display:grid;grid-template-columns:230px repeat(4,1fr);align-items:center}
+.g-head div{font-family:var(--mono);font-size:11.5px;color:var(--muted);padding-bottom:6px;border-bottom:1px solid var(--line)}
+.g-row{min-height:34px}
+.g-row .name{font-size:13px;color:var(--ink-2);padding-right:12px;display:flex;align-items:center;gap:8px}
+.g-track{grid-column:2 / 6;position:relative;height:22px;background:repeating-linear-gradient(to right,transparent 0,transparent calc(25% - 1px),var(--grid) calc(25% - 1px),var(--grid) 25%)}
+.g-bar{position:absolute;top:3px;height:16px;border-radius:4px}
+.g-bar.de{background:var(--de)} .g-bar.it{background:var(--it)}
+.g-group{font-size:12px;font-weight:600;color:var(--ink);padding-top:10px;display:flex;align-items:center;gap:6px}
+
+footer.src{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted);display:grid;gap:10px}
+footer.src ol{margin:0;padding-left:18px;display:grid;gap:4px}
+footer.src p{margin:0;max-width:90ch}
+
+@media (max-width:900px){
+  .findings{grid-template-columns:repeat(2,1fr)}
+  .grid-2,.grid-3-1{grid-template-columns:1fr}
+}
+@media (max-width:480px){
+  .findings{grid-template-columns:1fr}
+  .hrow,.stack-row{grid-template-columns:76px 1fr}
+  .tt .n{font-size:22px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+<header class="top">
+  <div class="eyebrow">Global Performance Marketing · 신입 인턴 지원 포트폴리오</div>
+  <h1>독일·이탈리아 모바일 케이스 시장 — 기회 발견부터 예산 배분, 분석 역량까지</h1>
+  <p class="lede">3개 탭으로 구성했습니다. <b class="mono">①시장 기회</b>는 공개 실측 데이터, <b class="mono">②예산 배분</b>은 실측 수요지수에 합성 시뮬레이션을 더한 것, <b class="mono">③분석 역량</b>은 직접 설계한 합성 데이터로 만든 분석 사례입니다. 어떤 수치가 실측이고 어떤 수치가 합성인지 모든 화면에 표시했습니다.</p>
+  <div class="meta">
+    <span class="flag"><i class="sw de"></i><b>독일 (DE)</b></span>
+    <span class="flag"><i class="sw it"></i><b>이탈리아 (IT)</b></span>
+    <span class="flag"><i class="sw synth"></i><b>합성 데이터</b></span>
+    <span>기준일 <b class="mono">2026-09-23</b></span>
+    <span>개인 분석 자료이며 슈피겐 공식 자료가 아닙니다</span>
+  </div>
+</header>
+</div>
+
+<div class="tabbar" role="tablist" aria-label="대시보드 탭"><div class="in">
+  <button class="tabbtn" data-tab="t1" role="tab" aria-selected="true">① 시장 기회 <span class="i">실측</span></button>
+  <button class="tabbtn" data-tab="t2" role="tab" aria-selected="false">② 수요 캘린더 예산 배분 <span class="i">실측+합성</span></button>
+  <button class="tabbtn" data-tab="t3" role="tab" aria-selected="false">③ 분석 역량 <span class="i">합성</span></button>
+</div></div>
+
+<!-- ===================== TAB 1 : 시장 기회 (실측) ===================== -->
+<div id="panel-t1" data-panel="t1">
+<nav class="jump" aria-label="탭1 섹션 이동"><div class="in">
+  <a href="#market">시장 구조</a><a href="#demand">검색 수요</a><a href="#brand">브랜드 관심도</a><a href="#meta">Meta 광고</a><a href="#tiktok">TikTok</a><a href="#amazon">Amazon</a><a href="#plan">4분기 실행안</a><a href="#sources">출처</a>
+</div></nav>
+
+<div class="wrap">
+<div class="databanner"><span class="ic">●</span><div><b>탭1은 전부 공개 실측 데이터</b>입니다 — Statcounter 기기 점유율, Google Trends 검색지수, Meta·TikTok 광고 라이브러리, Amazon 베스트셀러를 직접 조회해 정리했습니다. 합성 데이터는 이 탭에 없습니다.</div></div>
+<div class="findings" aria-label="핵심 발견">
+  <div class="finding">
+    <span class="pill crit tag">공백</span>
+    <div class="num">0.9%<small>DE</small></div>
+    <p>슈피겐 독일 iPhone 18 Pro 광고 도달 중 18–24세 비중입니다. 같은 시기 이탈리아 광고는 13.2%였습니다.</p>
+  </div>
+  <div class="finding">
+    <span class="pill crit tag">공백</span>
+    <div class="num">0<small>건 · IT</small></div>
+    <p>2026년 이탈리아에 노출된 슈피겐 TikTok 광고 수입니다. 같은 기간 독일은 74건이었습니다.</p>
+  </div>
+  <div class="finding">
+    <span class="pill warn tag">타이밍</span>
+    <div class="num">2.2×<small>IT</small></div>
+    <p>이탈리아 크리스마스 주 'cover iPhone' 검색량입니다. 8월 평균 대비 배율로, 독일 블랙프라이데이 주(1.5×)보다 큽니다.</p>
+  </div>
+  <div class="finding">
+    <span class="pill warn tag">순위</span>
+    <div class="num">#21<small>DE·IT</small></div>
+    <p>Amazon.de와 Amazon.it 케이스 베스트셀러에서 슈피겐의 최고 순위입니다. 상위권은 TORRAS, ESR, JETech이 차지하고 있습니다.</p>
+  </div>
+</div>
+
+<section class="block" id="market">
+  <div class="sec-head">
+    <div class="eyebrow">시장 구조</div>
+    <h2>두 나라 모두 아이폰이 1위지만, 이탈리아는 중저가 안드로이드 비중이 훨씬 큽니다</h2>
+    <p>제조사별 모바일 웹 트래픽 점유율 12개월 평균(2025.9–2026.8)입니다. 케이스는 기종별로 팔리기 때문에, 이 비중이 SKU와 광고 소재의 우선순위가 됩니다.</p>
+  </div>
+  <div class="grid-3-1">
+    <div class="panel">
+      <h3>제조사별 점유율 (12개월 평균, %)</h3>
+      <div class="legend"><span><i class="sw de"></i>독일</span><span><i class="sw it"></i>이탈리아</span></div>
+      <div class="hbars" id="vendorBars"></div>
+      <div class="axis-note">출처: Statcounter Global Stats, Mobile Vendor Market Share</div>
+    </div>
+    <div class="panel list-insights">
+      <div class="insight"><b>독일: 아이폰과 갤럭시 양강 구도</b><p>Apple 38.3%, Samsung 31.5%로 두 브랜드가 70%를 차지합니다. 플래그십 출시 시점에 맞춘 신제품 캠페인의 효율이 가장 큰 시장입니다.</p></div>
+      <div class="insight"><b>이탈리아: 롱테일 기종 시장</b><p>Motorola(5.0%)와 Oppo(3.9%)의 비중이 독일보다 4–6배 큽니다. Amazon.it 베스트셀러에도 Galaxy A 시리즈와 OPPO A6 케이스가 올라 있습니다.</p></div>
+      <div class="insight"><b>독일 Xiaomi 급상승 확인 필요</b><p>2026년 8월 독일의 Xiaomi 비중이 20.1%로 뛰었습니다(12개월 평균 10.3%). 일시적인 변동인지 추가로 모니터링해야 합니다.</p></div>
+      <div class="axis-note">안드로이드 점유율 12개월 평균은 독일 <span class="mono">61.2%</span>, 이탈리아 <span class="mono">65.6%</span>입니다.</div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="demand">
+  <div class="sec-head">
+    <div class="eyebrow">검색 수요 · Google Trends</div>
+    <h2>독일은 블랙프라이데이, 이탈리아는 크리스마스 직전 주가 정점입니다</h2>
+    <p>현지어 케이스 키워드의 주간 검색지수입니다(각 나라의 최고 주 = 100). 나라별로 따로 정규화했기 때문에 두 나라의 절대 검색량은 비교할 수 없습니다.</p>
+  </div>
+  <div class="panel">
+    <div style="display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;justify-content:space-between">
+      <div class="seg" role="group" aria-label="국가 선택">
+        <button type="button" id="btn-de" aria-pressed="true"><i class="sw de"></i>독일</button>
+        <button type="button" id="btn-it" aria-pressed="false"><i class="sw it"></i>이탈리아</button>
+      </div>
+      <div class="legend" id="demandLegend"></div>
+    </div>
+    <div class="chart" id="demandChart"></div>
+    <div class="axis-note">음영 구간은 신형 아이폰 공개 주, 블랙프라이데이 주, 크리스마스 주입니다. 기간은 2024.9–2026.9, 주간 데이터입니다.</div>
+  </div>
+  <div class="grid-2">
+    <div class="panel list-insights">
+      <div class="insight"><b>독일은 일반 키워드 'Handyhülle' 중심</b><p>일반 키워드 검색량이 가장 많고, 블랙프라이데이 주(2025.11.23)에 최고치를 찍었습니다. 8월 평균 대비 1.5배입니다. 아이폰 공개 주에는 'iPhone Hülle' 검색이 2.0배로 늘어납니다.</p></div>
+    </div>
+    <div class="panel list-insights">
+      <div class="insight"><b>이탈리아는 기종명으로 검색</b><p>일반 키워드 'cover cellulare'의 검색지수는 2–5로 사실상 검색되지 않습니다. 이탈리아 소비자는 'cover iPhone'처럼 기종명으로 검색하므로 모델별 키워드와 카탈로그 광고가 필요합니다. 최고치는 크리스마스 주입니다.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="brand">
+  <div class="sec-head">
+    <div class="eyebrow">브랜드 관심도 · Google Trends</div>
+    <h2>이탈리아에서는 슈피겐이 검색 1위, 독일에서는 Rhinoshield가 출시 시즌마다 앞섭니다</h2>
+    <p>브랜드명 검색지수입니다. 'ESR'은 다른 뜻으로도 쓰이는 약어라 비교에서 뺐습니다.</p>
+  </div>
+  <div class="grid-3-1">
+    <div class="panel">
+      <h3>독일 브랜드 검색 추이 (주간)</h3>
+      <div class="legend" id="brandLegend"></div>
+      <div class="chart" id="brandChart"></div>
+      <div class="axis-note">2026년 8월 중순 슈피겐 급등 시 연관 검색어는 'spigen ez fit'(보호필름)과 'spigen tesla'(+300%)였습니다. 급등 원인은 추가로 확인해야 합니다.</div>
+    </div>
+    <div class="panel">
+      <h3>슈피겐 대비 경쟁사 검색량</h3>
+      <p class="sub">최근 52주 평균, 슈피겐 = 100</p>
+      <div class="legend"><span><i class="sw de"></i>독일</span><span><i class="sw it"></i>이탈리아</span></div>
+      <div class="hbars" id="relBars"></div>
+      <div class="insight"><b>함의</b><p>이탈리아는 브랜드 인지도가 이미 있어 전환 중심 광고로 효율을 낼 수 있습니다. 독일은 출시 시즌에 경쟁사를 밀어낼 인지도 캠페인이 필요합니다.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="meta">
+  <div class="sec-head">
+    <div class="eyebrow">Meta 광고 · EU 광고 투명성 데이터</div>
+    <h2>같은 iPhone 18 Pro 광고인데, 독일은 35–54세 남성에게, 이탈리아는 25–34세에게 노출됩니다</h2>
+    <p>EU 규정(DSA)에 따라 공개되는 광고별 도달 수와 연령·성별 분포입니다. 두 나라에서 같은 시기에 집행된 슈피겐 iPhone 18 Pro 광고 1건씩을 비교했습니다.</p>
+  </div>
+  <div class="grid-2">
+    <div class="panel">
+      <h3>연령대별 도달 비중 (%)</h3>
+      <p class="sub">DE 광고 ID 1432188395542642 · 도달 16,766 ／ IT 광고 ID 3607813349373780 · 도달 167,954</p>
+      <div class="legend"><span><i class="sw de"></i>독일</span><span><i class="sw it"></i>이탈리아</span></div>
+      <div class="hbars" id="ageBars"></div>
+    </div>
+    <div class="panel">
+      <h3>성별 도달 비중</h3>
+      <div style="display:grid;gap:10px">
+        <div class="stack-row"><span>독일</span><div class="stack100"><div class="m" style="width:84.8%">남성 84.8%</div><div class="f" style="width:14.4%">14.4%</div></div></div>
+        <div class="stack-row"><span>이탈리아</span><div class="stack100"><div class="m" style="width:59.3%">남성 59.3%</div><div class="f" style="width:40.1%">여성 40.1%</div></div></div>
+      </div>
+      <div class="insight"><b>독일 광고는 전 연령·전 성별 타깃인데도 한쪽으로 쏠려 있습니다</b><p>타깃 설정은 18–65+ 전체, 성별 전체였습니다. 그런데 알고리즘이 반응이 좋은 35–54세 남성에게 노출을 몰아주고 있습니다. 18–34세는 도달의 13.5%에 불과해, 젊은 층을 겨냥한 전용 소재와 채널이 필요합니다.</p></div>
+    </div>
+  </div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>광고주</th><th>국가</th><th>게재 중 광고</th><th>현지화</th><th>메시지 축</th></tr></thead>
+      <tbody>
+        <tr><td><b>Spigen Deutschland</b></td><td><i class="sw de"></i></td><td class="num">~14건</td><td>독일어</td><td><span class="chip">iPhone 18 강화유리·카메라 보호</span><span class="chip">Oktoberfest 시즌 카피</span><span class="chip">Apple Watch</span><span class="chip">라이프 액세서리</span></td></tr>
+        <tr><td><b>Spigen Italia</b></td><td><i class="sw it"></i></td><td class="num">~12건</td><td>이탈리아어, 일부 영어</td><td><span class="chip">iPhone 18 Pro MagFit</span><span class="chip">Pixel 11</span><span class="chip">Galaxy Z Fold8</span><span class="chip">컬러 선택형 소재</span></td></tr>
+        <tr><td><b>OtterBox</b></td><td><i class="sw de"></i></td><td class="num">~22건</td><td>독일어</td><td><span class="chip">지속가능성 (선인장 가죽, 75% 재활용)</span><span class="chip">중고 보상판매 가치 보호</span><span class="chip">군사 규격 낙하 테스트</span></td></tr>
+        <tr><td><b>CASETiFY</b></td><td><i class="sw de"></i></td><td class="num">~130건</td><td>다국어 글로벌 소재 (독일어 없음)</td><td><span class="chip">IP 콜라보 (Tamagotchi, BT21, Spider-Man)</span><span class="chip">크리에이터 파트너십 광고</span><span class="chip">번들 15% 할인</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="axis-note">Meta 광고 라이브러리의 키워드 검색 결과입니다(활성 광고, 2026-09-23 조회). 슈피겐 독일 결과에는 Amazon.de의 리셀러 광고 2건이 포함되어 있습니다. 연령·성별 표본은 국가별 1건이며, 표본을 늘리는 추가 수집을 진행 중입니다.</div>
+</section>
+
+<section class="block" id="tiktok">
+  <div class="sec-head">
+    <div class="eyebrow">TikTok · Commercial Content Library</div>
+    <h2>이탈리아 TikTok은 비어 있는 채널입니다</h2>
+    <p>TikTok의 EU 광고 라이브러리에서 광고주 'Spigen Korea Co.,Ltd.'의 2026년 노출 광고를 국가별로 조회했습니다(2026.1.1–9.23).</p>
+  </div>
+  <div class="grid-2">
+    <div class="panel">
+      <div class="tt">
+        <div><span class="n">434</span><span class="l">EU 전체 (9/23 조회)</span></div>
+        <div><span class="n" style="color:var(--de)">74</span><span class="l">독일</span></div>
+        <div><span class="n" style="color:var(--it)">0</span><span class="l">이탈리아</span></div>
+      </div>
+      <div class="axis-note">독일·이탈리아는 같은 날 두 차례 재조회해 재확인했습니다(이탈리아 0건 유지, 독일은 첫 조회 136건→재조회 74건으로 감소). TikTok 라이브러리가 오래된·비활성 광고를 주기적으로 걸러내며 생긴 차이로 보입니다. EU 전체 434건은 첫 조회 기준이며 이후 재검증하지 않았습니다.</div>
+    </div>
+    <div class="panel list-insights">
+      <div class="insight"><b>근거 1: 이탈리아 Meta 도달의 57%가 18–34세</b><p>젊은 층의 반응이 이미 확인된 시장인데, 이들이 가장 많이 쓰는 숏폼 채널에서는 슈피겐 광고가 노출되지 않고 있습니다.</p></div>
+      <div class="insight"><b>근거 2: 기종명 검색 문화</b><p>"iPhone 18 Pro 케이스 5종 낙하 비교"처럼 기종별 크리에이터 리뷰 포맷이 검색 수요와 바로 연결됩니다.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="amazon">
+  <div class="sec-head">
+    <div class="eyebrow">Amazon 베스트셀러 · 케이스 카테고리 상위 30</div>
+    <h2>MagSafe와 군사 규격은 이제 기본 조건입니다. 차별화는 다른 곳에서 해야 합니다</h2>
+    <p>Amazon.de 'Handyhüllen & Cover'와 Amazon.it 'Custodie e cover'의 상위 30개 상품명에 등장하는 핵심 속성을 집계했습니다(2026-09-23).</p>
+  </div>
+  <div class="grid-3-1">
+    <div class="panel">
+      <h3>상품명 속성 등장 수 (상위 30개 중)</h3>
+      <div class="legend"><span><i class="sw de"></i>Amazon.de</span><span><i class="sw it"></i>Amazon.it</span></div>
+      <div class="hbars" id="kwBars"></div>
+    </div>
+    <div class="panel list-insights">
+      <div class="insight"><b>슈피겐 순위: DE #21·#29, IT #21</b><p>상위권은 TORRAS(DE 상위 30개 중 4개), JETech(IT 8개), ESR(IT #1), TOCOL 같은 가성비 브랜드가 차지하고 있습니다.</p></div>
+      <div class="insight"><b>이탈리아는 구형 아이폰 수요가 있음</b><p>IT 상위 30개 중 7개가 iPhone 13–15용입니다. DE는 1개입니다. 구형 기종 카탈로그 광고는 경쟁이 적은 영역입니다.</p></div>
+      <div class="insight"><b>기종 구성</b><p>DE는 iPhone 24개, Samsung 5개, Pixel 1개입니다. IT는 iPhone 22개, Samsung 6개(대부분 Galaxy A), OPPO 2개입니다.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="plan">
+  <div class="sec-head">
+    <div class="eyebrow">실행안 · 2026년 4분기</div>
+    <h2>독일은 젊은 층 확장, 이탈리아는 TikTok 진입과 크리스마스 집중</h2>
+    <p>위 데이터를 근거로 짠 캠페인 캘린더입니다. 기간과 목표 수치는 내부 성과 데이터로 검증해야 할 가설입니다. 예산의 시기별 배분 근거는 탭2에서 시뮬레이션으로 확인할 수 있습니다.</p>
+  </div>
+  <div class="panel" style="overflow-x:auto">
+    <div class="gantt" id="gantt"></div>
+  </div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>과제</th><th>근거</th><th>핵심 지표</th><th>현재 관측치</th><th>목표 (가설)</th></tr></thead>
+      <tbody>
+        <tr><td><i class="sw de"></i> <b>DE 젊은 층 확장</b><br><span class="axis-note">TikTok Spark Ads와 Meta 연령 분리 캠페인</span></td><td>Meta 도달 중 18–34세 13.5%</td><td>도달 중 18–34세 비중</td><td class="num">13.5%</td><td class="num">35% 이상</td></tr>
+        <tr><td><i class="sw it"></i> <b>IT TikTok 파일럿</b><br><span class="axis-note">마이크로 크리에이터 5–8명, 기종별 낙하 비교 포맷</span></td><td>2026년 TikTok 광고 0건, Meta 도달의 57%가 18–34세</td><td>테스트 소재 수, 상위 소재 CTR</td><td class="num">0건</td><td class="num">4주간 소재 20개 테스트</td></tr>
+        <tr><td><i class="sw it"></i> <b>IT 모델별 카탈로그 광고</b><br><span class="axis-note">iPhone 13–15, Galaxy A 시리즈</span></td><td>기종명 검색 문화, 베스트셀러 중 구형 7개</td><td>카탈로그 광고 ROAS</td><td class="num">—</td><td class="num">신제품 소재 대비 동등 이상</td></tr>
+        <tr><td><b>시즌 예산 배분</b><br><span class="axis-note">수요지수에 비례해 가중 — 탭2 참고</span></td><td>DE 블랙프라이데이 주 1.5×, IT 크리스마스 주 2.2×</td><td>피크 주 예산 비중</td><td class="num">—</td><td class="num">DE 11월 말, IT 12월 중순 집중</td></tr>
+        <tr><td><b>Amazon 순위 개선</b><br><span class="axis-note">SNS 유입을 Amazon 상세페이지로 연결</span></td><td>최고 순위 #21</td><td>주력 SKU 베스트셀러 순위</td><td class="num">#21</td><td class="num">Top 10</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<footer class="src" id="sources">
+  <div class="eyebrow">데이터 출처와 수집 방법 (탭1)</div>
+  <ol>
+    <li>Statcounter Global Stats: Mobile Vendor / OS Market Share, Germany·Italy, 월간 2025.8–2026.8 CSV</li>
+    <li>Google Trends: DE 'Handyhülle', 'iPhone Hülle', 'Samsung Hülle', IT 'cover cellulare', 'cover iPhone', 'cover Samsung', 브랜드명 5종. 주간 2024.9.1–2026.9.19, 연관 검색어 포함</li>
+    <li>Meta 광고 라이브러리: 활성 광고 키워드 검색(DE, IT) 및 광고별 EU 투명성 도달 데이터, 2026-09-23 조회</li>
+    <li>TikTok Commercial Content Library: 광고주명 'spigen' 검색, EU 전체·DE·IT, 2026.1.1–9.23</li>
+    <li>Amazon.de / Amazon.it 케이스 카테고리 베스트셀러 상위 30개, 2026-09-23 조회</li>
+  </ol>
+  <p>모든 수치는 위 공개 출처에서 직접 수집했습니다. 수집 스크립트 작성, 상품명 속성 분류, 현지어 광고 문구 번역에는 생성형 AI를 보조 도구로 활용했습니다. Meta 연령·성별 비중은 광고 1건의 인구통계 합계를 기준으로 계산했으며, 계정 전체 성과를 대표하지 않습니다.</p>
+</footer>
+</div>
+</div>
+<!-- ===================== /TAB 1 ===================== -->
+
+<!-- ===================== TAB 2 : 수요 캘린더 예산 배분 (실측+합성) ===================== -->
+<div id="panel-t2" data-panel="t2" hidden>
+<div class="wrap">
+<div class="databanner"><span class="ic" style="color:var(--synth)">●</span><div><b>이 탭은 실측과 합성이 섞여 있습니다.</b> 주간 <b>수요지수는 실측</b>(Google Trends 검색지수를 가공)이고, 광고비·신규고객·CAC·ROAS·매출예측·예산 재배분 결과는 모두 <b class="mono">합성 데이터</b> 시뮬레이션입니다. 아래 모든 차트와 표에 실측/합성 배지를 달아뒀습니다.</div></div>
+
+<div class="findings" aria-label="핵심 발견">
+  <div class="finding">
+    <span class="pill warn tag">배분 격차</span>
+    <div class="num">5.4<small>%p · DE</small></div>
+    <p>수요 상위 8주가 연간 수요의 20.2%를 차지하는데, 같은 기간 광고비는 14.8%뿐입니다. 이탈리아는 격차가 6.3%p로 더 큽니다.</p>
+  </div>
+  <div class="finding">
+    <span class="pill good tag">효율차</span>
+    <div class="num">-36~45%<small>CAC</small></div>
+    <p>수요 최상위 5분위의 고객 획득비용(CAC)이 최하위 5분위 대비 독일 36%, 이탈리아 45% 낮습니다(합성 시뮬레이션).</p>
+  </div>
+  <div class="finding">
+    <span class="pill synth tag">예측</span>
+    <div class="num">12/20<small>주 · 공통</small></div>
+    <p>Prophet 매출예측(합성) 기준 2026년 4분기 최대 매출 주는 두 나라 모두 12월 20일 주입니다. 상위 8주가 분기 매출의 56–58%를 차지합니다.</p>
+  </div>
+  <div class="finding">
+    <span class="pill good tag">재배분 효과</span>
+    <div class="num">+1.4~3.6%<small>합성</small></div>
+    <p>총예산을 유지한 채 수요지수에 비례해 재배분하면(탄력성 가정 0.5), 신규 고객이 독일 +1.6%, 이탈리아 +2.4% 늘어납니다(합성 시뮬레이션).</p>
+  </div>
+</div>
+
+<section class="block" id="t2-mix">
+  <div class="sec-head">
+    <div class="taghead"><span class="pill real">실측: 수요지수</span><span class="pill synth">합성: 광고비 배분</span></div>
+    <h2>지금 광고비는 계절을 따라가지 못합니다</h2>
+    <p>실선(파랑·주황)은 실측 검색 수요지수, 회색은 현재처럼 월별로 고르게 쓴 광고비, 보라 점선은 수요지수에 비례해 재배분했을 때의 제안 광고비입니다. 세 값 모두 연평균을 100으로 맞춰 지수화했습니다. 기간은 2025.9–2026.8입니다.</p>
+  </div>
+  <div class="panel">
+    <div style="display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;justify-content:space-between">
+      <div class="seg" role="group" aria-label="국가 선택 탭2">
+        <button type="button" id="t2-btn-de" aria-pressed="true"><i class="sw de"></i>독일</button>
+        <button type="button" id="t2-btn-it" aria-pressed="false"><i class="sw it"></i>이탈리아</button>
+      </div>
+      <div class="legend" id="t2-mixLegend"></div>
+    </div>
+    <div class="chart" id="t2-mixChart"></div>
+    <div class="axis-note">지수 = (주간값 ÷ 52주 평균) × 100. 수요지수 실측값은 <code class="mono">data_seed/google_trends_weekly.csv</code>, 광고비는 합성 파이프라인의 marketing_spend 테이블 기준입니다.</div>
+  </div>
+</section>
+
+<section class="block" id="t2-quintile">
+  <div class="sec-head">
+    <div class="taghead"><span class="pill synth">합성 시뮬레이션</span></div>
+    <h2>수요가 높은 주에 광고를 쓰면 같은 돈으로 더 싸게, 더 많이 데려옵니다</h2>
+    <p>52주를 수요지수 5분위로 나눠 광고 효율을 비교했습니다(합성 데이터, 채널·크리에이티브는 동일하다고 가정).</p>
+  </div>
+  <div class="grid-2">
+    <div class="panel">
+      <h3>수요 분위별 CAC (€)</h3>
+      <div class="legend"><span><i class="sw de"></i>독일</span><span><i class="sw it"></i>이탈리아</span></div>
+      <div class="hbars" id="t2-cacBars"></div>
+      <div class="axis-note">분위 1=수요 최하위, 5=수요 최상위</div>
+    </div>
+    <div class="panel">
+      <h3>수요 분위별 첫구매 ROAS (×)</h3>
+      <div class="legend"><span><i class="sw de"></i>독일</span><span><i class="sw it"></i>이탈리아</span></div>
+      <div class="hbars" id="t2-roasBars"></div>
+      <div class="axis-note">첫구매 매출 ÷ 광고비. 재구매 매출은 포함하지 않아 실제 ROAS보다 보수적입니다.</div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="t2-forecast">
+  <div class="sec-head">
+    <div class="taghead"><span class="pill synth">합성 시뮬레이션</span></div>
+    <h2>Prophet으로 2026년 4분기 피크 주간을 미리 잡습니다</h2>
+    <p>2년치 합성 주간 매출로 학습한 시계열 모델의 예측입니다(모델 A: 추세+계절성+이벤트). 음영 밴드는 80% 예측구간입니다. 세 구간(2025.9–12, 2026.2–4, 2026.6–8)을 떼어 백테스트한 결과 평균 오차(MAPE)는 8–27%였습니다.</p>
+  </div>
+  <div class="panel">
+    <div style="display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;justify-content:space-between">
+      <div class="seg" role="group" aria-label="국가 선택 탭2 예측">
+        <button type="button" id="t2f-btn-de" aria-pressed="true"><i class="sw de"></i>독일</button>
+        <button type="button" id="t2f-btn-it" aria-pressed="false"><i class="sw it"></i>이탈리아</button>
+      </div>
+      <div class="legend" id="t2-fcLegend"></div>
+    </div>
+    <div class="chart" id="t2-fcChart"></div>
+    <div class="axis-note">실선 이전 구간=2025.9–2026.8 실제(합성) 매출, 이후 구간=2026.9–12 예측. DE 최고 3주: 12/20주(30,881€)·9/20주(30,685€)·12/06주(27,604€). IT 최고 3주: 12/20주(25,945€)·9/20주(24,626€)·12/13주(21,080€).</div>
+  </div>
+  <div class="grid-2">
+    <div class="panel">
+      <h3>시즌 이벤트 매출 상승률 (%)</h3>
+      <p class="sub">2025년 실제(합성) 매출, 이벤트 주 ÷ 직전 4주 평균 − 1</p>
+      <div class="legend"><span><i class="sw de"></i>독일</span><span><i class="sw it"></i>이탈리아</span></div>
+      <div class="hbars" id="t2-eventBars"></div>
+    </div>
+    <div class="panel list-insights">
+      <div class="insight synth"><b>블랙프라이데이는 독일이, 크리스마스는 이탈리아가 크다</b><p>실측 Google Trends에서 본 국가별 패턴과 방향이 같습니다. 두 나라 모두 가장 큰 이벤트는 아이폰 출시 주지만, 비교 기준이 비수기(8월)라 상승폭이 과장돼 있습니다.</p></div>
+      <div class="insight synth"><b>갤럭시 출시 효과는 국가별로 엇갈림</b><p>학습 사례가 2025년 한 번뿐이라 추정이 불안정합니다. 출시 사례가 쌓일 때마다 다시 검증해야 합니다.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="t2-budget">
+  <div class="sec-head">
+    <div class="taghead"><span class="pill synth">합성 시뮬레이션</span></div>
+    <h2>총예산은 그대로, 시기만 옮기면 얼마나 늘까</h2>
+    <p>주간 광고비를 수요지수에 비례해 재배분하되, 한 주 변경폭을 ±50%로 제한한 시뮬레이션입니다. 반응곡선 탄력성(b)은 실제로 알 수 없어 가정값이며, 결과를 b별 민감도로 제시합니다.</p>
+  </div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>국가</th><th>탄력성 가정 (b)</th><th>주간 총예산</th><th>신규고객 증가율 (제한 없음)</th><th>신규고객 증가율 (±50% 제한)</th></tr></thead>
+      <tbody>
+        <tr><td><i class="sw de"></i> 독일</td><td class="num">0.30</td><td class="num">€86,727</td><td class="num">+0.73%</td><td class="num">+0.71%</td></tr>
+        <tr><td><i class="sw de"></i> 독일</td><td class="num">0.50</td><td class="num">€86,727</td><td class="num">+1.61%</td><td class="num">+1.44%</td></tr>
+        <tr><td><i class="sw de"></i> 독일</td><td class="num">0.70</td><td class="num">€86,727</td><td class="num">+3.65%</td><td class="num">+2.60%</td></tr>
+        <tr><td><i class="sw it"></i> 이탈리아</td><td class="num">0.30</td><td class="num">€48,149</td><td class="num">+1.02%</td><td class="num">+0.95%</td></tr>
+        <tr><td><i class="sw it"></i> 이탈리아</td><td class="num">0.50</td><td class="num">€48,149</td><td class="num">+2.36%</td><td class="num">+1.96%</td></tr>
+        <tr><td><i class="sw it"></i> 이탈리아</td><td class="num">0.70</td><td class="num">€48,149</td><td class="num">+5.58%</td><td class="num">+3.58%</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="axis-note">탄력성이 클수록(광고비가 성과에 더 민감할수록) 재배분 효과가 커집니다. 합성 데이터에서는 광고비가 성과에 인과적으로 영향을 주지 않으므로, b는 가정값이며 실제 캠페인에서는 증분실험(geo-test)으로 추정해야 합니다.</div>
+</section>
+
+<footer class="src" id="t2-sources">
+  <div class="eyebrow">데이터 출처와 방법 (탭2)</div>
+  <ol>
+    <li><b>실측</b>: Google Trends 주간 검색지수 (DE·IT 케이스 키워드, 2024.9–2026.9) → dim_calendar 수요지수로 가공</li>
+    <li><b>합성</b>: 30,000명 고객 규모로 생성한 주문·광고비·세션 데이터 (Python + Faker, seed=42) → SQL로 수요 분위별 효율 집계, Prophet으로 시계열 예측</li>
+  </ol>
+  <p>합성 데이터에서는 광고비가 성과에 인과적으로 영향을 주지 않습니다. 반응곡선 탄력성(b)과 매출 예측은 방법론을 보여주기 위한 가정·시뮬레이션이며, 실제 집행 전 소규모 테스트로 검증이 필요합니다.</p>
+</footer>
+</div>
+</div>
+<!-- ===================== /TAB 2 ===================== -->
+
+<!-- ===================== TAB 3 : 분석 역량 (합성) ===================== -->
+<div id="panel-t3" data-panel="t3" hidden>
+<div class="wrap">
+<div class="databanner"><span class="ic" style="color:var(--synth)">●</span><div><b>이 탭의 모든 수치는 합성 데이터</b>입니다. 실제 슈피겐 데이터가 아니며, RFM·코호트 리텐션·A/B 테스트·K-Means 클러스터링 등 분석 방법론과 도구 활용 역량을 보여주기 위해 직접 설계했습니다. <code class="mono">config/taxonomy.py</code>의 가정으로 30,000명 규모 고객 데이터를 생성했습니다.</div></div>
+
+<div class="findings" aria-label="핵심 발견">
+  <div class="finding">
+    <span class="pill synth tag">RFM</span>
+    <div class="num">36%<small>상위 5%</small></div>
+    <p>상위 5% 고객이 전체 매출의 36%를 차지합니다. Champions 세그먼트(7.6%)만으로도 매출의 38.2%를 냅니다.</p>
+  </div>
+  <div class="finding">
+    <span class="pill synth tag">리텐션</span>
+    <div class="num">2.1×<small>채널차</small></div>
+    <p>6개월 재구매율이 추천 채널 40.8% vs TikTok 광고 19.4%로 2.1배 차이 납니다. 유입 채널별 CRM 전략이 필요한 이유입니다.</p>
+  </div>
+  <div class="finding">
+    <span class="pill good tag">A/B</span>
+    <div class="num">+15.1%<small>RPU</small></div>
+    <p>장바구니 번들 제안 실험에서 사용자당 매출이 15.1% 올랐습니다(p=0.0003). 번들 수락률은 노출 첫 주 33%에서 4주 후 20%로 낮아져 신기효과를 확인했습니다.</p>
+  </div>
+  <div class="finding">
+    <span class="pill synth tag">K-Means</span>
+    <div class="num">62.8%<small>매출·C2</small></div>
+    <p>구매행동만으로 나눈 3개 군집 중 핵심 고객 군집(전체의 20.3%)이 매출의 62.8%를 차지합니다.</p>
+  </div>
+</div>
+
+<section class="block" id="t3-rfm">
+  <div class="sec-head">
+    <div class="taghead"><span class="pill synth">합성 데이터 · SQL</span></div>
+    <h2>RFM: 고객 8%가 매출 38%를 만든다</h2>
+    <p>Recency·Frequency·Monetary 점수로 8개 세그먼트를 나눴습니다. 고객 비중과 매출 비중의 격차가 클수록 그 세그먼트에 마케팅 예산을 더 쏟을 근거가 됩니다.</p>
+  </div>
+  <div class="grid-3-1">
+    <div class="panel">
+      <h3>세그먼트별 고객 비중 vs 매출 비중 (%)</h3>
+      <div class="legend"><span><i class="lg-fill" style="background:var(--ink-2)"></i>고객 비중</span><span><i class="lg-fill" style="background:var(--ink)"></i>매출 비중</span></div>
+      <div class="hbars" id="t3-rfmBars"></div>
+    </div>
+    <div class="panel list-insights">
+      <div class="insight synth"><b>검증: 숨은 정답과 대조</b><p>합성 데이터에는 정답 세그먼트(VIP·충성·일반·1회성)를 따로 심어뒀습니다. 숨은 VIP 고객의 66%가 RFM Champions·Loyal로 분류돼, 행동 데이터만으로 실제 가치 있는 고객을 상당히 잘 찾아냈습니다.</p></div>
+      <div class="insight synth"><b>Lost 세그먼트 31.8%는 재활성화보다 선별이 우선</b><p>평균 구매 경과 535일, 매출 비중은 12.9%에 그칩니다. 전체 발송보다 과거 매출 상위 고객만 골라 소규모로 테스트하는 편이 비용 효율적입니다.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="t3-retention">
+  <div class="sec-head">
+    <div class="taghead"><span class="pill synth">합성 데이터 · 코호트 분석</span></div>
+    <h2>유입 채널에 따라 재구매율이 두 배 차이 납니다</h2>
+    <p>가입 월별 코호트를 만들어 채널별 누적 재구매율을 추적했습니다.</p>
+  </div>
+  <div class="grid-3-1">
+    <div class="panel">
+      <h3>채널별 누적 재구매율 (%)</h3>
+      <div class="legend"><span><i class="lg-fill" style="background:var(--muted)"></i>1개월</span><span><i class="lg-fill" style="background:var(--ink-2)"></i>3개월</span><span><i class="lg-fill" style="background:var(--ink)"></i>6개월</span></div>
+      <div class="hbars" id="t3-retBars"></div>
+    </div>
+    <div class="panel list-insights">
+      <div class="insight synth"><b>추천·오가닉이 가장 충성도 높은 채널</b><p>6개월 재구매율 추천 40.8%, 오가닉 37.5%. 지인 추천이나 자연 유입 고객은 초기 신뢰가 이미 형성돼 있다는 뜻입니다.</p></div>
+      <div class="insight synth"><b>TikTok은 인지도용, Meta는 전환용으로 역할 분리</b><p>TikTok 유입은 6개월 재구매율 19.4%로 가장 낮지만 신규 고객 획득 규모는 작지 않습니다. 획득은 TikTok, 재구매 전환은 이메일·리타깃팅으로 분리해 설계하는 편이 맞습니다.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="t3-ab">
+  <div class="sec-head">
+    <div class="taghead"><span class="pill synth">합성 데이터 · A/B 테스트</span></div>
+    <h2>장바구니 번들 제안, 출시할 만합니다</h2>
+    <p>가설: 장바구니에서 "케이스+강화유리 15% 번들"을 제안하면 사용자당 매출(RPU)이 오른다. 주요 지표는 RPU, 보조 지표는 구매전환율(CVR)·객단가(AOV), 가드레일은 반품률입니다.</p>
+  </div>
+  <div class="grid-2">
+    <div class="panel">
+      <h3>대조군 vs 실험군 (€)</h3>
+      <div class="legend"><span><i class="lg-fill" style="background:var(--muted)"></i>대조군</span><span><i class="lg-fill" style="background:var(--synth)"></i>실험군</span></div>
+      <div class="hbars" id="t3-abBars"></div>
+      <div class="axis-note">RPU +15.1% (p=0.0003, 95% CI +6.3~+24.2%) · AOV +15.5% (p&lt;0.0001) · CVR −1.7% (p=0.467, 유의하지 않음)</div>
+    </div>
+    <div class="panel">
+      <h3>번들 수락률의 신기효과 (%)</h3>
+      <p class="sub">노출 후 경과 기간별</p>
+      <div class="hbars" id="t3-noveltyBars"></div>
+      <div class="axis-note">노출 직후 33%에서 4주 이후 20%로 낮아집니다. 실험 기간 평균 효과는 장기 효과보다 과대평가됐을 수 있어, 출시 후에도 4주 이상 추적이 필요합니다.</div>
+    </div>
+  </div>
+  <div class="databanner" style="margin-block:0"><span class="ic">✓</span><div><b>결론: 출시 권장.</b> 배정 비율 정상(SRM p=0.104), 그룹 간 주문 불일치 0건. 반품률 가드레일은 3.8%→4.3%로 방향은 나빠졌지만 유의하지 않아(p=0.427) 출시 후 모니터링 항목으로 남깁니다.</div></div>
+</section>
+
+<section class="block" id="t3-kmeans">
+  <div class="sec-head">
+    <div class="taghead"><span class="pill synth">합성 데이터 · K-Means (scikit-learn)</span></div>
+    <h2>구매행동 8개 피처만으로 실루엣 0.32의 3개 군집이 나뉩니다</h2>
+    <p>recency·frequency·monetary·객단가·할인사용률·액세서리비중·최근 방문·가입기간으로 군집화했습니다(k=2가 실루엣이 가장 높지만 운영 전략을 나누기 어려워 k=3 선택).</p>
+  </div>
+  <div class="grid-3-1">
+    <div class="panel">
+      <h3>군집별 고객 비중 vs 매출 비중 (%)</h3>
+      <div class="legend"><span><i class="lg-fill" style="background:var(--ink-2)"></i>고객 비중</span><span><i class="lg-fill" style="background:var(--ink)"></i>매출 비중</span></div>
+      <div class="hbars" id="t3-kmeansBars"></div>
+    </div>
+    <div class="panel list-insights">
+      <div class="insight synth"><b>C2 핵심 고객: 할인보다 접근성</b><p>20.3%가 매출 62.8%(1인당 €225). 평균 구매 4.4회, 액세서리 비중 50%. 신모델 사전 알림·번들처럼 할인 없이도 반응하는 그룹이라 마진을 지킬 수 있습니다.</p></div>
+      <div class="insight synth"><b>C0 휴면·이탈 위험: 전원 발송 금지</b><p>61.8%가 평균 409일째 구매가 없고 최근 90일 방문 0.2회입니다. 재활성화는 비용 대비 효과를 소규모로 먼저 테스트합니다.</p></div>
+      <div class="insight synth"><b>검증: 군집 순도 50.3%</b><p>숨은 정답 세그먼트 기준입니다. 합성 데이터라서 계산 가능한 지표이며, 구매행동만으로 숨은 고객유형을 어느 정도 복원했다는 뜻으로만 해석합니다.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="t3-method">
+  <div class="sec-head">
+    <div class="eyebrow">방법론 · 사용 기술</div>
+    <h2>이 분석에서 실제로 쓴 도구</h2>
+  </div>
+  <div class="grid-2">
+    <div class="panel list-insights">
+      <div class="insight"><b>데이터 생성</b><p>Python, pandas, numpy, Faker(de_DE/it_IT 로케일)로 고객 3만 명·주문 5.5만 건·이벤트 190만 건을 생성했습니다. 계절성은 실측 Google Trends 지수로 가중했습니다.</p></div>
+      <div class="insight"><b>적재·집계</b><p>SQLite + 순수 SQL로 품질 점검, RFM, 코호트 리텐션, A/B, 수요-예산 집계 쿼리 5종을 작성했습니다. MySQL 8.0 버전 쿼리도 별도로 검증했습니다.</p></div>
+      <div class="insight"><b>통계·머신러닝</b><p>scikit-learn K-Means(+ numpy 자체 구현 대체 경로), Prophet 시계열 예측, 정규근사·부트스트랩 기반 A/B 유의성 검정을 python으로 직접 구현했습니다.</p></div>
+    </div>
+    <div class="panel list-insights">
+      <div class="insight"><b>시각화</b><p>matplotlib로 색맹 친화 팔레트를 적용한 EDA·클러스터·예측 그림을 그리고, 이 대시보드는 순수 HTML/CSS/SVG로 직접 구현했습니다(차트 라이브러리 미사용).</p></div>
+      <div class="insight"><b>데이터 품질</b><p>고아 레코드, 금액 불일치, 가입 전 주문 등 7종 무결성 규칙을 점검한 결과 위반 0건이었습니다.</p></div>
+      <div class="insight"><b>한계</b><p>합성 데이터는 광고비가 성과에 인과적으로 영향을 주지 않습니다. 로그인 세션만 생성해 실제 사이트보다 전환율이 높게 나옵니다. 탭2·3의 결과는 방법론 시연이며 실제 의사결정에는 실データ 검증이 필요합니다.</p></div>
+    </div>
+  </div>
+</section>
+
+<footer class="src" id="t3-sources">
+  <div class="eyebrow">데이터 출처와 방법 (탭3)</div>
+  <p>모든 표·차트는 <code class="mono">config/taxonomy.py</code>의 가정으로 생성한 합성 데이터(seed=42, 고객 30,000명)를 SQL·scikit-learn·Prophet으로 분석한 결과입니다. 실제 슈피겐 데이터가 아니며, 데이터 분석·통계·머신러닝 도구를 다루는 역량을 보여주기 위한 자체 프로젝트입니다.</p>
+</footer>
+</div>
+</div>
+<!-- ===================== /TAB 3 ===================== -->
+
+<div id="tip" role="tooltip"></div>
+
+<script>
+(function(){
+/* ============ shared helpers ============ */
+const tip=document.getElementById('tip');
+function showTip(html,x,y){tip.innerHTML=html;tip.style.opacity=1;const r=tip.getBoundingClientRect();let L=x+14,T=y+14;if(L+r.width>innerWidth-8)L=x-r.width-14;if(T+r.height>innerHeight-8)T=y-r.height-14;tip.style.left=Math.max(8,L)+'px';tip.style.top=Math.max(8,T)+'px';}
+function hideTip(){tip.style.opacity=0}
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const NS='http://www.w3.org/2000/svg';
+function sv(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+
+function hbars(el,{cats,series,max,unit,dec}){
+  el.innerHTML='';
+  cats.forEach((c,ci)=>{
+    const row=document.createElement('div');row.className='hrow';
+    const lab=document.createElement('div');lab.className='lab';lab.textContent=c;row.appendChild(lab);
+    const bars=document.createElement('div');bars.className='bars';
+    series.forEach(s=>{
+      const v=s.values[ci];const b=document.createElement('div');
+      b.className='bar '+s.cls;b.style.width='calc('+(v/max*100)+'% * 0.86)';
+      const t=document.createElement('span');t.className='v';t.textContent=(dec!=null?v.toFixed(dec):v)+(unit||'');b.appendChild(t);
+      b.addEventListener('mousemove',e=>showTip('<div class="t">'+c+'</div><div class="r"><i class="sw '+s.cls+'"></i>'+s.name+'<b>'+(dec!=null?v.toFixed(dec):v)+(unit||'')+'</b></div>',e.clientX,e.clientY));
+      b.addEventListener('mouseleave',hideTip);
+      bars.appendChild(b);
+    });
+    row.appendChild(bars);el.appendChild(row);
+  });
+}
+
+/* generic line/fan chart. series: {name,values(may contain null),color,width,dash,band:{lower,upper}} */
+function lineChart(el,{series,markers,yMax,height,n:nOverride}){
+  el.innerHTML='';
+  const Wd=960,H=height||300,m={l:44,r:96,t:22,b:26};
+  const n=nOverride||series[0].values.length;
+  const svg=sv('svg',{viewBox:`0 0 ${Wd} ${H}`,role:'img'},el);
+  const x=i=>m.l+i*(Wd-m.l-m.r)/(n-1), y=v=>m.t+(1-v/yMax)*(H-m.t-m.b);
+  (markers||[]).forEach(mk=>{
+    const x0=x(mk.i)-5,x1=x(mk.i)+5;
+    sv('rect',{x:x0,y:m.t,width:x1-x0,height:H-m.t-m.b,class:'mark-band'},svg);
+    if(mk.label){const t=sv('text',{x:x(mk.i),y:m.t-8,'text-anchor':'middle',class:'mark-lab'},svg);t.textContent=mk.label;}
+  });
+  const yTicks=[0,0.25,0.5,0.75,1].map(f=>Math.round(yMax*f));
+  yTicks.forEach(v=>{
+    sv('line',{x1:m.l,x2:Wd-m.r,y1:y(v),y2:y(v),class:v===0?'base':'gridl'},svg);
+    const t=sv('text',{x:m.l-8,y:y(v)+3.5,'text-anchor':'end'},svg);t.textContent=v>=1000?(v/1000)+'k':v;
+  });
+  if(markers&&markers.xlabels){
+    markers.xlabels.forEach(xl=>{const t=sv('text',{x:x(xl.i),y:H-8,'text-anchor':'middle'},svg);t.textContent=xl.label;});
+  }
+  function buildPath(values){
+    let d='',move=true;
+    values.forEach((v,i)=>{ if(v==null){move=true;return;} d+=(move?'M':'L')+x(i).toFixed(1)+' '+y(v).toFixed(1)+' '; move=false; });
+    return d.trim();
+  }
+  function lastIdx(values){ for(let i=values.length-1;i>=0;i--) if(values[i]!=null) return i; return values.length-1; }
+  series.forEach(s=>{
+    if(s.band){
+      const idxs=[]; s.band.upper.forEach((v,i)=>{ if(v!=null&&s.band.lower[i]!=null) idxs.push(i); });
+      if(idxs.length){
+        let d='M'+x(idxs[0]).toFixed(1)+' '+y(s.band.upper[idxs[0]]).toFixed(1);
+        idxs.slice(1).forEach(i=>d+=' L'+x(i).toFixed(1)+' '+y(s.band.upper[i]).toFixed(1));
+        for(let k=idxs.length-1;k>=0;k--){const i=idxs[k];d+=' L'+x(i).toFixed(1)+' '+y(s.band.lower[i]).toFixed(1);}
+        d+=' Z';
+        sv('path',{d,fill:s.color,opacity:.14,stroke:'none'},svg);
+      }
+    }
+  });
+  const endLabels=[];
+  series.forEach(s=>{
+    const d=buildPath(s.values);
+    if(d)sv('path',{d,fill:'none',stroke:s.color,'stroke-width':s.width||2,'stroke-linejoin':'round','stroke-linecap':'round','stroke-dasharray':s.dash||'none'},svg);
+    const li=lastIdx(s.values);
+    if(s.values[li]!=null) endLabels.push({y:y(s.values[li]),s,li});
+  });
+  endLabels.sort((a,b)=>a.y-b.y);for(let i=1;i<endLabels.length;i++){if(endLabels[i].y-endLabels[i-1].y<13)endLabels[i].y=endLabels[i-1].y+13;}
+  endLabels.forEach(({y:yy,s,li})=>{sv('circle',{cx:x(li),cy:y(s.values[li]),r:3,fill:s.color,stroke:'var(--surface)','stroke-width':2},svg);const t=sv('text',{x:x(li)+8,y:yy+3.5,style:'fill:var(--ink-2)'},svg);t.textContent=s.name;});
+  const cross=sv('line',{y1:m.t,y2:H-m.b,class:'cross',visibility:'hidden'},svg);
+  const dots=series.map(s=>sv('circle',{r:4,fill:s.color,stroke:'var(--surface)','stroke-width':2,visibility:'hidden'},svg));
+  const hit=sv('rect',{x:m.l,y:0,width:Wd-m.l-m.r,height:H,fill:'transparent'},svg);
+  function move(e){
+    const r=svg.getBoundingClientRect();const px=(e.clientX-r.left)/r.width*Wd;
+    const i=Math.max(0,Math.min(n-1,Math.round((px-m.l)/((Wd-m.l-m.r)/(n-1)))));
+    cross.setAttribute('x1',x(i));cross.setAttribute('x2',x(i));cross.setAttribute('visibility','visible');
+    let any=false;
+    dots.forEach((dt,k)=>{ const v=series[k].values[i]; if(v==null){dt.setAttribute('visibility','hidden');return;} any=true; dt.setAttribute('cx',x(i));dt.setAttribute('cy',y(v));dt.setAttribute('visibility','visible');});
+    const mk=(markers||[]).find(q=>q.i===i);
+    const lbl=(markers&&markers.xlabels||[]).find(q=>q.i===i);
+    let h='<div class="t">'+(mk&&mk.full||lbl&&lbl.full||('#'+i))+'</div>';
+    series.slice().sort((a,b)=>(b.values[i]||-Infinity)-(a.values[i]||-Infinity)).forEach(s=>{
+      if(s.values[i]==null)return;
+      h+='<div class="r"><span class="lg-line'+(s.dash?' dash':'')+'" style="border-color:'+s.color+'"></span>'+s.name+'<b>'+Math.round(s.values[i]).toLocaleString()+'</b></div>';
+    });
+    if(any)showTip(h,e.clientX,e.clientY);
+  }
+  hit.addEventListener('mousemove',move);
+  hit.addEventListener('mouseleave',()=>{hideTip();cross.setAttribute('visibility','hidden');dots.forEach(d=>d.setAttribute('visibility','hidden'));});
+}
+
+/* ============ TAB SWITCHING ============ */
+const tabbtns=[...document.querySelectorAll('.tabbtn')];
+tabbtns.forEach(b=>b.addEventListener('click',()=>{
+  tabbtns.forEach(x=>x.setAttribute('aria-selected',x===b));
+  document.querySelectorAll('[data-panel]').forEach(p=>p.hidden = p.id!=='panel-'+b.dataset.tab);
+  window.scrollTo({top:0,behavior:'instant'});
+}));
+
+/* ============ TAB 1 (verbatim from published market radar) ============ */
+const START = Date.UTC(2024,8,1);
+const W = 7*864e5;
+const dateAt = i => new Date(START + i*W);
+const fmt = d => d.getUTCFullYear()+'.'+(d.getUTCMonth()+1)+'.'+d.getUTCDate();
+
+const deCat=[[64,29,15],[68,49,14],[69,50,15],[67,49,15],[67,45,15],[65,40,15],[62,38,14],[69,38,15],[67,40,15],[64,38,15],[67,39,14],[79,45,18],[93,54,24],[86,53,19],[87,48,20],[79,46,17],[90,56,21],[74,43,16],[66,38,13],[71,35,14],[62,36,15],[64,36,16],[69,34,16],[64,35,16],[65,35,14],[58,34,13],[62,36,14],[63,36,14],[63,36,13],[63,36,14],[65,36,13],[60,34,14],[64,37,14],[64,35,14],[59,32,12],[63,34,12],[64,34,13],[63,34,13],[65,34,13],[63,34,13],[63,31,14],[61,30,13],[62,30,13],[60,32,11],[70,36,15],[67,36,15],[67,34,15],[68,33,15],[70,34,14],[68,31,14],[69,31,14],[69,32,14],[67,32,14],[74,57,14],[69,61,14],[77,65,15],[71,52,14],[70,52,14],[74,49,13],[69,48,14],[66,46,14],[78,49,14],[77,47,14],[92,51,17],[100,59,19],[98,61,19],[90,57,17],[90,58,17],[100,67,17],[83,54,15],[73,46,13],[69,44,13],[69,42,14],[65,40,12],[68,39,13],[62,41,11],[60,36,11],[60,36,14],[72,38,15],[72,39,15],[68,39,14],[66,38,14],[64,40,13],[61,36,12],[60,36,12],[62,34,12],[61,35,13],[62,35,12],[70,36,13],[60,31,12],[60,32,11],[69,38,14],[67,34,12],[57,29,11],[52,29,10],[59,34,12],[66,35,13],[62,34,12],[68,36,14],[68,35,14],[68,36,15],[68,39,14],[78,43,20],[72,45,21],[73,41,19],[76,55,15],[75,65,13]];
+const itCat=[[3,48,21],[2,57,19],[3,55,18],[2,57,18],[2,55,19],[2,48,20],[3,51,18],[2,50,18],[1,51,18],[2,48,17],[2,52,20],[2,54,23],[2,63,26],[3,64,24],[3,70,25],[4,71,22],[4,87,29],[3,66,24],[3,58,19],[2,57,19],[1,56,19],[2,49,21],[2,47,21],[3,45,19],[2,41,17],[2,41,18],[3,43,17],[2,47,16],[3,43,19],[3,41,18],[1,37,15],[2,41,15],[3,41,18],[2,39,15],[2,38,15],[1,40,14],[2,38,15],[3,38,16],[2,37,16],[3,37,15],[2,37,18],[2,39,18],[2,39,17],[2,42,16],[3,51,20],[2,52,19],[3,50,21],[2,47,20],[3,49,22],[3,43,20],[2,47,22],[2,44,21],[1,43,19],[1,64,21],[2,69,20],[2,77,18],[2,61,16],[2,61,18],[2,55,19],[2,54,17],[3,56,18],[2,60,18],[1,60,21],[3,62,22],[2,69,26],[3,74,27],[3,78,25],[3,83,24],[4,100,25],[5,80,23],[2,70,19],[2,64,16],[2,59,18],[2,51,19],[2,55,20],[2,65,22],[2,65,27],[2,58,22],[2,48,22],[2,51,22],[2,50,20],[2,52,19],[2,47,20],[2,42,15],[2,48,18],[2,43,16],[2,43,16],[2,47,17],[2,45,19],[3,43,18],[2,37,17],[2,40,17],[2,40,16],[2,46,17],[2,44,16],[2,48,18],[3,50,17],[2,50,19],[3,47,20],[3,51,24],[2,53,19],[2,54,20],[3,59,21],[2,59,22],[3,53,21],[3,68,23],[2,72,20]];
+const deBrand=[[17,11,14,21,31],[25,24,18,25,65],[26,20,16,25,58],[25,21,19,26,55],[24,16,16,20,42],[22,15,17,27,41],[23,14,17,26,37],[22,17,16,26,39],[18,15,17,21,34],[16,11,15,23,34],[17,14,16,22,36],[23,17,19,25,43],[26,17,19,27,69],[24,21,16,26,50],[21,15,18,28,42],[20,13,13,23,40],[22,20,17,21,53],[22,18,17,17,43],[16,13,11,22,39],[17,13,14,20,31],[26,14,14,23,33],[26,17,13,24,31],[29,16,14,21,34],[24,13,12,23,27],[20,12,12,17,28],[19,14,10,21,30],[18,15,10,22,32],[17,12,8,25,31],[18,14,12,22,29],[19,15,12,24,31],[16,14,12,21,29],[19,14,10,22,27],[17,14,11,19,27],[18,12,10,23,29],[17,15,9,19,30],[16,13,10,24,28],[16,13,10,21,26],[14,12,9,19,30],[16,14,11,20,31],[18,13,10,19,25],[20,13,10,22,28],[15,13,7,19,26],[18,12,10,23,25],[16,13,8,21,24],[22,14,11,26,32],[21,12,11,23,29],[22,14,10,25,27],[19,13,10,23,29],[20,11,11,26,30],[19,14,11,26,30],[21,13,9,22,31],[24,14,12,27,26],[20,14,10,25,28],[37,18,16,39,55],[29,17,15,35,51],[31,16,17,39,46],[28,13,14,33,38],[26,15,13,35,29],[23,12,14,32,27],[24,12,16,28,28],[21,15,17,33,28],[26,15,16,36,31],[26,12,16,39,29],[24,14,20,39,37],[35,20,19,39,69],[33,18,18,39,42],[27,16,16,39,34],[31,17,15,41,33],[28,15,18,39,45],[27,14,14,33,34],[24,13,12,34,30],[22,13,11,35,26],[21,13,11,35,24],[22,14,11,30,22],[21,14,10,31,22],[20,13,9,33,21],[20,16,9,33,19],[22,16,8,33,26],[30,13,9,34,28],[33,13,11,39,25],[26,13,8,38,23],[29,16,9,36,21],[25,12,7,37,24],[23,13,8,35,21],[20,8,7,35,21],[18,12,5,34,16],[15,11,5,28,20],[21,12,7,33,20],[19,12,9,33,17],[21,11,8,32,19],[21,12,8,31,15],[23,12,8,33,21],[23,10,8,36,20],[19,12,6,34,16],[21,12,7,36,19],[28,13,10,44,19],[27,13,7,45,20],[22,9,8,31,18],[26,13,7,28,18],[26,12,7,31,18],[25,10,8,30,19],[42,17,7,41,18],[93,40,9,59,19],[87,39,10,60,20],[100,59,10,73,22],[67,35,12,56,42],[31,16,11,41,40]];
+const itBrand=[[31,14,16,40,0],[52,9,18,45,0],[61,19,18,38,10],[56,22,28,56,0],[45,18,17,48,0],[84,14,21,47,0],[38,15,14,38,0],[38,18,21,40,0],[36,14,17,50,10],[31,0,16,54,0],[40,15,29,53,0],[52,15,16,42,0],[49,18,11,60,0],[53,13,12,32,0],[44,13,14,46,0],[51,17,21,39,0],[53,17,18,41,0],[56,12,24,41,0],[43,18,21,41,0],[34,0,21,34,0],[51,17,16,38,0],[59,10,16,41,0],[43,11,11,44,0],[42,11,0,44,0],[55,10,16,39,0],[39,14,17,40,0],[36,16,14,37,0],[34,0,20,37,0],[41,14,22,45,0],[38,0,20,45,0],[38,16,11,43,0],[40,17,13,46,0],[35,13,14,42,0],[34,13,0,41,0],[26,15,0,36,0],[39,13,0,33,0],[38,17,19,36,0],[39,12,15,41,0],[28,16,13,51,0],[22,0,19,47,0],[33,12,0,47,0],[47,0,13,63,0],[30,0,12,46,0],[39,12,0,45,0],[42,0,19,36,0],[50,0,15,60,0],[50,11,18,53,0],[32,17,12,52,0],[50,0,23,62,13],[41,0,21,50,0],[61,0,15,55,0],[44,15,15,46,0],[38,13,20,50,0],[77,23,25,54,0],[70,20,25,68,0],[83,18,23,55,15],[62,10,24,68,0],[66,17,29,54,0],[55,14,28,63,0],[38,17,18,37,0],[54,14,20,63,0],[59,18,22,78,10],[64,23,20,64,0],[69,24,21,77,0],[65,19,35,65,15],[62,20,26,69,0],[65,12,30,60,0],[53,20,19,79,0],[67,20,31,68,14],[73,14,24,73,0],[54,15,25,50,12],[76,16,22,61,0],[60,14,29,70,0],[48,23,29,60,0],[49,10,24,83,0],[51,30,24,65,0],[43,37,24,77,0],[59,31,22,71,0],[56,15,0,71,0],[81,19,17,100,12],[74,19,0,79,0],[55,11,0,76,12],[64,17,11,96,27],[49,0,11,74,14],[43,0,14,67,0],[57,11,14,77,0],[45,18,20,51,0],[42,12,0,57,0],[43,17,0,48,0],[56,0,19,56,0],[44,18,12,56,12],[47,15,17,63,0],[41,0,11,54,0],[40,11,16,60,0],[56,16,16,60,0],[48,15,14,57,10],[61,12,0,47,0],[58,14,18,56,0],[41,0,24,53,0],[61,17,18,58,0],[55,0,19,48,0],[57,15,29,60,12],[70,0,15,57,11],[53,16,15,63,0],[65,0,22,62,0],[71,9,25,56,6],[88,14,22,69,9]];
+
+hbars(document.getElementById('vendorBars'),{cats:['Apple','Samsung','Xiaomi','Google','Motorola','Oppo'],series:[{name:'독일',cls:'de',values:[38.3,31.5,10.3,5.7,1.1,0.6]},{name:'이탈리아',cls:'it',values:[34.1,26.9,10.3,5.5,5.0,3.9]}],max:40,unit:'%',dec:1});
+hbars(document.getElementById('ageBars'),{cats:['18–24','25–34','35–44','45–54','55–64','65+'],series:[{name:'독일',cls:'de',values:[0.9,12.6,30.3,26.2,20.6,9.4]},{name:'이탈리아',cls:'it',values:[13.2,43.8,24.0,8.0,3.9,7.1]}],max:45,unit:'%',dec:1});
+hbars(document.getElementById('kwBars'),{cats:['MagSafe·자석','투명','군사 규격','강화유리 동봉','변색 방지','카메라 보호','슬림'],series:[{name:'Amazon.de',cls:'de',values:[18,11,14,8,8,7,6]},{name:'Amazon.it',cls:'it',values:[18,10,8,8,6,6,8]}],max:20,unit:'개'});
+
+function rel(arr){const last=arr.slice(-52);const avg=k=>last.reduce((a,r)=>a+r[k],0)/last.length;const s=avg(0);return [1,2,4].map(k=>Math.round(avg(k)/s*100));}
+const rDE=rel(deBrand), rIT=rel(itBrand);
+hbars(document.getElementById('relBars'),{cats:['OtterBox','CASETiFY','Rhinoshield'],series:[{name:'독일',cls:'de',values:rDE},{name:'이탈리아',cls:'it',values:rIT}],max:100});
+
+const baseMarkers=(()=>{const idx=s=>Math.round((Date.UTC(...s.split('-').map((v,i)=>i===1?v-1:+v))-START)/W);return [
+  {i:idx('2024-09-08'),label:'iPhone',full:'신형 아이폰 공개 주'},{i:idx('2025-09-07'),label:'iPhone',full:'신형 아이폰 공개 주'},{i:idx('2026-09-06'),label:'iPhone',full:'신형 아이폰 공개 주'},
+  {i:idx('2024-11-24'),label:'BF',full:'블랙프라이데이 주'},{i:idx('2025-11-23'),label:'BF',full:'블랙프라이데이 주'},
+  {i:idx('2024-12-22'),label:'Xmas',full:'크리스마스 주'},{i:idx('2025-12-21'),label:'Xmas',full:'크리스마스 주'}];})();
+
+let country='de';
+function drawDemand(){
+  const c=country==='de'?css('--de'):css('--it'), g=css('--grey-series');
+  const data=country==='de'?deCat:itCat;
+  const names=country==='de'?['Handyhülle','iPhone Hülle','Samsung Hülle']:['cover cellulare','cover iPhone','cover Samsung'];
+  const series=[
+    {name:names[0],values:data.map(r=>r[0]),color:country==='de'?c:g,width:country==='de'?2.5:1.5},
+    {name:names[1],values:data.map(r=>r[1]),color:country==='de'?g:c,width:country==='de'?1.75:2.5},
+    {name:names[2],values:data.map(r=>r[2]),color:c,width:1.75,dash:'5 4'}];
+  lineChart(document.getElementById('demandChart'),{series,markers:baseMarkers,yMax:100});
+  document.getElementById('demandLegend').innerHTML=series.map(s=>'<span><i class="lg-line'+(s.dash?' dash':'')+'" style="border-color:'+s.color+'"></i>'+s.name+'</span>').join('');
+}
+function drawBrand(){
+  const ink=css('--ink'), g=css('--grey-series');
+  const series=[
+    {name:'Rhinoshield',values:deBrand.map(r=>r[4]),color:g,width:1.5,dash:'5 4'},
+    {name:'OtterBox',values:deBrand.map(r=>r[1]),color:g,width:1.5},
+    {name:'CASETiFY',values:deBrand.map(r=>r[2]),color:g,width:1.5,dash:'1 3'},
+    {name:'Spigen',values:deBrand.map(r=>r[0]),color:ink,width:2.5}];
+  lineChart(document.getElementById('brandChart'),{series,markers:baseMarkers.filter(m=>m.full!=='크리스마스 주'),yMax:100,height:280});
+  document.getElementById('brandLegend').innerHTML=series.slice().reverse().map(s=>'<span><i class="lg-line'+(s.dash?' dash':'')+'" style="border-color:'+s.color+'"></i>'+s.name+'</span>').join('');
+}
+function setCountry(c){country=c;document.getElementById('btn-de').setAttribute('aria-pressed',c==='de');document.getElementById('btn-it').setAttribute('aria-pressed',c==='it');drawDemand();try{localStorage.setItem('radar-country',c)}catch(e){}}
+document.getElementById('btn-de').onclick=()=>setCountry('de');
+document.getElementById('btn-it').onclick=()=>setCountry('it');
+try{const s=localStorage.getItem('radar-country');if(s==='it')country='it';}catch(e){}
+
+const G0=Date.UTC(2026,9,1),G1=Date.UTC(2027,1,1);
+const pos=s=>{const [a,b,c]=s.split('-').map(Number);return (Date.UTC(a,b-1,c)-G0)/(G1-G0)*100;};
+const plan=[
+  {g:'독일',cls:'de',rows:[
+    ['iPhone 18 리타깃팅 (Meta)','2026-10-01','2026-10-31'],
+    ['18–34 TikTok Spark Ads 테스트','2026-10-06','2026-11-15'],
+    ['Black Friday · Cyber Week','2026-11-16','2026-12-01'],
+    ['Weihnachten 선물 번들','2026-12-01','2026-12-24']]},
+  {g:'이탈리아',cls:'it',rows:[
+    ['TikTok 크리에이터 파일럿','2026-10-06','2026-11-15'],
+    ['모델별 카탈로그 (iPhone 13–15 · Galaxy A)','2026-10-15','2027-01-20'],
+    ['Black Friday','2026-11-20','2026-12-01'],
+    ['Natale 피크 집중','2026-12-07','2026-12-27']]}];
+const gantt=document.getElementById('gantt');
+let gh='<div class="g-head"><div></div><div>2026.10</div><div>2026.11</div><div>2026.12</div><div>2027.01</div></div>';
+plan.forEach(p=>{gh+='<div class="g-group"><i class="sw '+p.cls+'"></i>'+p.g+'</div>';p.rows.forEach(([n,a,b])=>{const l=pos(a),w=pos(b)-l;gh+='<div class="g-row"><div class="name">'+n+'</div><div class="g-track"><div class="g-bar '+p.cls+'" style="left:'+l+'%;width:'+w+'%" data-t="'+n+'" data-r="'+a.replace(/-/g,'.')+' – '+b.replace(/-/g,'.')+'"></div></div></div>';});});
+gantt.innerHTML=gh;
+gantt.querySelectorAll('.g-bar').forEach(b=>{b.addEventListener('mousemove',e=>showTip('<div class="t">'+b.dataset.r+'</div>'+b.dataset.t,e.clientX,e.clientY));b.addEventListener('mouseleave',hideTip);});
+
+/* ============ TAB 2 data ============ */
+const T2DATA = {"budget_plan": {"DE": {"weeks": ["2025-08-31", "2025-09-07", "2025-09-14", "2025-09-21", "2025-09-28", "2025-10-05", "2025-10-12", "2025-10-19", "2025-10-26", "2025-11-02", "2025-11-09", "2025-11-16", "2025-11-23", "2025-11-30", "2025-12-07", "2025-12-14", "2025-12-21", "2025-12-28", "2026-01-04", "2026-01-11", "2026-01-18", "2026-01-25", "2026-02-01", "2026-02-08", "2026-02-15", "2026-02-22", "2026-03-01", "2026-03-08", "2026-03-15", "2026-03-22", "2026-03-29", "2026-04-05", "2026-04-12", "2026-04-19", "2026-04-26", "2026-05-03", "2026-05-10", "2026-05-17", "2026-05-24", "2026-05-31", "2026-06-07", "2026-06-14", "2026-06-21", "2026-06-28", "2026-07-05", "2026-07-12", "2026-07-19", "2026-07-26", "2026-08-02", "2026-08-09", "2026-08-16", "2026-08-23"], "demand": [0.922, 1.164, 1.142, 1.251, 1.099, 1.09, 1.105, 1.052, 1.009, 1.148, 1.124, 1.308, 1.448, 1.442, 1.33, 1.337, 1.498, 1.234, 1.075, 1.022, 1.011, 0.952, 0.977, 0.926, 0.872, 0.881, 1.016, 1.023, 0.98, 0.954, 0.945, 0.885, 0.875, 0.881, 0.881, 0.888, 0.976, 0.84, 0.844, 0.983, 0.93, 0.794, 0.742, 0.851, 0.93, 0.881, 0.96, 0.953, 0.963, 0.98, 1.124, 1.082], "current": [1666, 1596, 1621, 1584, 1600, 1546, 1605, 1576, 1551, 1635, 1650, 1658, 1599, 1589, 1552, 1619, 1589, 1613, 1610, 1558, 1591, 1649, 1792, 1731, 1756, 1877, 1613, 1645, 1632, 1643, 1664, 1720, 1718, 1800, 1751, 1700, 1677, 1695, 1692, 1725, 1704, 1781, 1765, 1684, 1671, 1739, 1670, 1716, 1712, 1667, 1752, 1778], "proposed": [1369, 2181, 2100, 2377, 1945, 1913, 1966, 1782, 1639, 2122, 2034, 2488, 2398, 2383, 2328, 2429, 2383, 2419, 1861, 1682, 1646, 1459, 1537, 1380, 1224, 1250, 1662, 1685, 1546, 1465, 1438, 1261, 1233, 1250, 1250, 1270, 1534, 1136, 1147, 1556, 1392, 1015, 886, 1166, 1392, 1250, 1484, 1462, 1493, 1546, 2034, 1885]}, "IT": {"weeks": ["2025-08-31", "2025-09-07", "2025-09-14", "2025-09-21", "2025-09-28", "2025-10-05", "2025-10-12", "2025-10-19", "2025-10-26", "2025-11-02", "2025-11-09", "2025-11-16", "2025-11-23", "2025-11-30", "2025-12-07", "2025-12-14", "2025-12-21", "2025-12-28", "2026-01-04", "2026-01-11", "2026-01-18", "2026-01-25", "2026-02-01", "2026-02-08", "2026-02-15", "2026-02-22", "2026-03-01", "2026-03-08", "2026-03-15", "2026-03-22", "2026-03-29", "2026-04-05", "2026-04-12", "2026-04-19", "2026-04-26", "2026-05-03", "2026-05-10", "2026-05-17", "2026-05-24", "2026-05-31", "2026-06-07", "2026-06-14", "2026-06-21", "2026-06-28", "2026-07-05", "2026-07-12", "2026-07-19", "2026-07-26", "2026-08-02", "2026-08-09", "2026-08-16", "2026-08-23"], "demand": [0.835, 1.202, 1.281, 1.405, 1.123, 1.134, 1.038, 1.01, 1.049, 1.117, 1.134, 1.174, 1.315, 1.405, 1.461, 1.54, 1.834, 1.484, 1.292, 1.174, 1.1, 0.97, 1.044, 1.224, 1.253, 1.106, 0.937, 0.987, 0.959, 0.987, 0.908, 0.796, 0.914, 0.818, 0.818, 0.891, 0.869, 0.829, 0.722, 0.773, 0.767, 0.875, 0.835, 0.914, 0.942, 0.954, 0.908, 0.999, 1.004, 1.027, 1.117, 1.123], "current": [884, 912, 880, 921, 896, 895, 884, 873, 904, 893, 876, 961, 897, 899, 877, 880, 898, 910, 907, 895, 906, 887, 970, 989, 976, 1026, 919, 908, 921, 875, 927, 975, 965, 942, 949, 923, 929, 931, 929, 950, 1003, 937, 956, 934, 944, 947, 955, 920, 998, 945, 927, 944], "proposed": [591, 1224, 1320, 1381, 1068, 1089, 913, 864, 932, 1057, 1089, 1168, 1345, 1349, 1315, 1320, 1347, 1365, 1360, 1168, 1025, 797, 923, 1269, 1330, 1036, 744, 825, 779, 825, 698, 537, 708, 567, 567, 673, 640, 582, 465, 506, 502, 649, 591, 708, 752, 771, 698, 845, 854, 894, 1057, 1068]}}, "prophet": {"DE": {"weeks": ["2025-11-02", "2025-11-09", "2025-11-16", "2025-11-23", "2025-11-30", "2025-12-07", "2025-12-14", "2025-12-21", "2025-12-28", "2026-01-04", "2026-01-11", "2026-01-18", "2026-01-25", "2026-02-01", "2026-02-08", "2026-02-15", "2026-02-22", "2026-03-01", "2026-03-08", "2026-03-15", "2026-03-22", "2026-03-29", "2026-04-05", "2026-04-12", "2026-04-19", "2026-04-26", "2026-05-03", "2026-05-10", "2026-05-17", "2026-05-24", "2026-05-31", "2026-06-07", "2026-06-14", "2026-06-21", "2026-06-28", "2026-07-05", "2026-07-12", "2026-07-19", "2026-07-26", "2026-08-02", "2026-08-09", "2026-08-16", "2026-08-23", "2026-08-30", "2026-09-06", "2026-09-13", "2026-09-20", "2026-09-27", "2026-10-04", "2026-10-11", "2026-10-18", "2026-10-25", "2026-11-01", "2026-11-08", "2026-11-15", "2026-11-22", "2026-11-29", "2026-12-06", "2026-12-13", "2026-12-20"], "actual": [16234, 15918, 17502, 17598, 19273, 17447, 17551, 23049, 17219, 16037, 13646, 15779, 14271, 12786, 14472, 12590, 14764, 18633, 22265, 26738, 19363, 19021, 16598, 15118, 16260, 14400, 13845, 16681, 13957, 13919, 17357, 16184, 13195, 11459, 13649, 12882, 15287, 14648, 15444, 15199, 16771, 18492, 19935, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], "lower": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 17459, 18884, 21899, 27741, 20967, 19227, 17947, 17093, 16915, 17780, 19493, 21649, 21963, 23192, 24621, 22352, 27928], "upper": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 23213, 24775, 27831, 33673, 26766, 25037, 23725, 22902, 22808, 23693, 25474, 27516, 27912, 29062, 30584, 28227, 33751]}, "IT": {"weeks": ["2025-11-02", "2025-11-09", "2025-11-16", "2025-11-23", "2025-11-30", "2025-12-07", "2025-12-14", "2025-12-21", "2025-12-28", "2026-01-04", "2026-01-11", "2026-01-18", "2026-01-25", "2026-02-01", "2026-02-08", "2026-02-15", "2026-02-22", "2026-03-01", "2026-03-08", "2026-03-15", "2026-03-22", "2026-03-29", "2026-04-05", "2026-04-12", "2026-04-19", "2026-04-26", "2026-05-03", "2026-05-10", "2026-05-17", "2026-05-24", "2026-05-31", "2026-06-07", "2026-06-14", "2026-06-21", "2026-06-28", "2026-07-05", "2026-07-12", "2026-07-19", "2026-07-26", "2026-08-02", "2026-08-09", "2026-08-16", "2026-08-23", "2026-08-30", "2026-09-06", "2026-09-13", "2026-09-20", "2026-09-27", "2026-10-04", "2026-10-11", "2026-10-18", "2026-10-25", "2026-11-01", "2026-11-08", "2026-11-15", "2026-11-22", "2026-11-29", "2026-12-06", "2026-12-13", "2026-12-20"], "actual": [10351, 9991, 10231, 10726, 12544, 14024, 14259, 18681, 16261, 12548, 12652, 11487, 10438, 10452, 12531, 12097, 12884, 10831, 15832, 17657, 12642, 11217, 10984, 10699, 8654, 9517, 9753, 8325, 10333, 8010, 8633, 7860, 8632, 10702, 10996, 11071, 11732, 10447, 12210, 10621, 10990, 12630, 15667, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null], "lower": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 11816, 12757, 16782, 22330, 16191, 14371, 13676, 12751, 12028, 11689, 12201, 13508, 13599, 16308, 18391, 18782, 23626], "upper": [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 16429, 17377, 21308, 26899, 20790, 18929, 18321, 17399, 16558, 16374, 16849, 18074, 18222, 20867, 23083, 23360, 28286]}}};
+
+let t2c='de';
+function t2drawMix(){
+  const cc=t2c==='de'?css('--de'):css('--it');
+  const bp=T2DATA.budget_plan[t2c.toUpperCase()];
+  const n=bp.weeks.length;
+  const idx=arr=>{const avg=arr.reduce((a,b)=>a+b,0)/arr.length; return arr.map(v=>Math.round(v/avg*100));};
+  const series=[
+    {name:'수요지수 (실측)',values:idx(bp.demand),color:cc,width:2.5},
+    {name:'현재 지출 (합성)',values:idx(bp.current),color:css('--grey-series'),width:1.75},
+    {name:'제안 지출 (합성)',values:idx(bp.proposed),color:css('--synth'),width:2,dash:'5 4'}];
+  const xlabels=[];for(let i=0;i<n;i++){if(bp.weeks[i].endsWith('-01')||i===0){xlabels.push({i,label:bp.weeks[i].slice(0,7)});}}
+  const markers=[]; markers.xlabels=xlabels;
+  lineChart(document.getElementById('t2-mixChart'),{series,markers,yMax:220,height:280});
+  document.getElementById('t2-mixLegend').innerHTML=series.map(s=>'<span><i class="lg-line'+(s.dash?' dash':'')+'" style="border-color:'+s.color+'"></i>'+s.name+'</span>').join('');
+}
+function t2setCountry(c){t2c=c;document.getElementById('t2-btn-de').setAttribute('aria-pressed',c==='de');document.getElementById('t2-btn-it').setAttribute('aria-pressed',c==='it');t2drawMix();}
+document.getElementById('t2-btn-de').onclick=()=>t2setCountry('de');
+document.getElementById('t2-btn-it').onclick=()=>t2setCountry('it');
+
+hbars(document.getElementById('t2-cacBars'),{cats:['Q1 최하위','Q2','Q3','Q4','Q5 최상위'],series:[{name:'독일',cls:'de',values:[17.15,15.01,14.87,13.66,10.89]},{name:'이탈리아',cls:'it',values:[15.42,12.95,10.58,10.17,8.47]}],max:18,unit:'€',dec:2});
+hbars(document.getElementById('t2-roasBars'),{cats:['Q1 최하위','Q2','Q3','Q4','Q5 최상위'],series:[{name:'독일',cls:'de',values:[2.03,2.27,2.29,2.50,3.05]},{name:'이탈리아',cls:'it',values:[2.17,2.63,3.14,3.29,3.83]}],max:4,unit:'×',dec:2});
+hbars(document.getElementById('t2-eventBars'),{cats:['블랙프라이데이','크리스마스 직전','아이폰 출시','갤럭시 S26 출시'],series:[{name:'독일',cls:'de',values:[16.6,29.0,65.2,52.0]},{name:'이탈리아',cls:'it',values:[11.6,51.2,79.3,34.6]}],max:85,unit:'%',dec:1});
+
+let t2fc='de';
+function t2drawForecast(){
+  const cc=css('--synth');
+  const p=T2DATA.prophet[t2fc.toUpperCase()];
+  const n=p.weeks.length;
+  const series=[
+    {name:'실제 (합성)',values:p.actual,color:cc,width:2.25},
+    {name:'예측 (합성)',values:p.weeks.map((w,i)=>p.lower[i]!=null?( (p.upper[i]+p.lower[i])/2 ):null),color:cc,width:2,dash:'5 4',band:{lower:p.lower,upper:p.upper}}];
+  const xlabels=[];
+  for(let i=0;i<n;i++){ if(p.weeks[i].slice(8,10)<='07') xlabels.push({i,label:p.weeks[i].slice(0,7)}); }
+  const markers=(()=>{const i=p.weeks.indexOf('2026-09-20');return i>=0?[{i,label:'피크',full:'피크 주 (예측)'}]:[];})();
+  lineChart(document.getElementById('t2-fcChart'),{series,markers:Object.assign(markers,{xlabels}),yMax:36000,height:300});
+  document.getElementById('t2-fcLegend').innerHTML='<span><i class="lg-line" style="border-color:'+cc+'"></i>실제 (합성)</span><span><i class="lg-line dash" style="border-color:'+cc+'"></i>예측 · 80% 구간 (합성)</span>';
+}
+function t2fSetCountry(c){t2fc=c;document.getElementById('t2f-btn-de').setAttribute('aria-pressed',c==='de');document.getElementById('t2f-btn-it').setAttribute('aria-pressed',c==='it');t2drawForecast();}
+document.getElementById('t2f-btn-de').onclick=()=>t2fSetCountry('de');
+document.getElementById('t2f-btn-it').onclick=()=>t2fSetCountry('it');
+
+/* ============ TAB 3 ============ */
+hbars(document.getElementById('t3-rfmBars'),{
+  cats:['1 Champions','2 Loyal','3 Potential','4 New','5 At Risk','6 Need Attn','7 Hibernating','8 Lost'],
+  series:[{name:'고객 비중',cls:'seq2',values:[7.6,6.0,6.2,23.1,3.3,17.2,4.9,31.8]},{name:'매출 비중',cls:'seq3',values:[38.2,12.7,6.2,9.9,7.3,8.2,4.5,12.9]}],
+  max:40,unit:'%',dec:1});
+hbars(document.getElementById('t3-retBars'),{
+  cats:['추천','오가닉','구글검색','인플루언서','Meta광고','TikTok광고'],
+  series:[{name:'1개월',cls:'seq1',values:[19.2,18.2,16.6,13.1,14.2,10.4]},{name:'3개월',cls:'seq2',values:[33.4,30.6,27.6,22.9,22.6,16.7]},{name:'6개월',cls:'seq3',values:[40.8,37.5,34.3,27.7,27.5,19.4]}],
+  max:45,unit:'%',dec:1});
+hbars(document.getElementById('t3-abBars'),{
+  cats:['RPU','AOV'],
+  series:[{name:'대조군',cls:'ctrl',values:[27.60,42.65]},{name:'실험군',cls:'synth',values:[31.76,49.27]}],
+  max:55,unit:'€',dec:2});
+hbars(document.getElementById('t3-noveltyBars'),{
+  cats:['0–2일','3–6일','7–13일','14–27일','28일+'],
+  series:[{name:'번들 수락률',cls:'synth',values:[32.6,40.3,21.0,13.7,19.8]}],
+  max:45,unit:'%',dec:1});
+hbars(document.getElementById('t3-kmeansBars'),{
+  cats:['C2 핵심고객','C0 휴면·이탈위험','C1 신규고객'],
+  series:[{name:'고객 비중',cls:'seq2',values:[20.3,61.8,17.9]},{name:'매출 비중',cls:'seq3',values:[62.8,28.5,8.7]}],
+  max:65,unit:'%',dec:1});
+
+/* ============ init ============ */
+setCountry('de');drawBrand();
+t2drawMix();t2drawForecast();
+const mq=matchMedia('(prefers-color-scheme: dark)');
+mq.addEventListener&&mq.addEventListener('change',()=>{drawDemand();drawBrand();t2drawMix();t2drawForecast();});
+new MutationObserver(()=>{drawDemand();drawBrand();t2drawMix();t2drawForecast();}).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+})();
+</script>
