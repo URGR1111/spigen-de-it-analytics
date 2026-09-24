@@ -41,6 +41,9 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font
   .sb-brand{padding:2px 8px}
   .sb-foot{display:none}
   #main{overflow:visible}
+  .hint .dir-l{display:none}
+  .sb-item .d{display:none}
+  .sb-item{padding:10px 8px}
 }
 .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
 h1,h2,h3{text-wrap:balance;margin:0}
@@ -50,7 +53,10 @@ h1,h2,h3{text-wrap:balance;margin:0}
 header.top{padding-block:44px 22px;display:grid;gap:14px;border-bottom:1px solid var(--line)}
 .eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-muted)}
 h1{font-size:clamp(24px,3.6vw,34px);font-weight:700;max-width:36ch}
-.lede{color:var(--ink-2);max-width:68ch;margin:0;font-size:15px}
+.lede{color:var(--ink);max-width:54ch;margin:0;font-size:16.5px;font-weight:500;line-height:1.75;text-wrap:balance}
+.lede .k-real{color:var(--de);font-weight:700} .lede .k-synth{color:var(--it);font-weight:700}
+.hint{display:block;width:fit-content;justify-self:start;margin:0;font-size:12.5px;color:var(--ink-dim);background:var(--surface);border-radius:999px;padding:6px 14px}
+@media (min-width:761px){.hint .dir-t{display:none}}
 .meta{display:flex;flex-wrap:wrap;gap:8px 20px;font-size:12.5px;color:var(--ink-muted)}
 .tag{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px}
 .tag.real{background:var(--de-bg);color:var(--de)} .tag.synth{background:var(--it-bg);color:var(--it)}
@@ -123,6 +129,7 @@ footer.src p{margin:0;max-width:100ch}
   .part-sub{margin-left:0}
 }
 @media (max-width:480px){.kpi-row{grid-template-columns:1fr}}
+@media (max-width:560px){.br-d{display:none}}
 
 /* ---- PART 3 console ---- */
 .filterbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
@@ -182,7 +189,6 @@ footer.src p{margin:0;max-width:100ch}
 th[data-k]{cursor:pointer;user-select:none}
 th .car{opacity:.5;margin-left:3px}
 .jump-link{color:var(--de);font-weight:600;cursor:pointer;text-decoration:none}
-.nav-badge{display:inline-flex;align-items:center;justify-content:center;min-width:16px;height:16px;padding:0 4px;border-radius:999px;background:var(--crit);color:#fff;font-size:9.5px;font-weight:700;font-family:var(--mono);margin-left:6px}
 </style>
 
 <div class="app">
@@ -191,7 +197,7 @@ th .car{opacity:.5;margin-left:3px}
   <nav class="sb-nav">
     <div class="sb-item active" data-view="p1" onclick="showView('p1')"><div class="n">PART 1</div><div class="t">시장 조사</div><div class="d">사용기기·경쟁사·브랜드검색·라이브러리</div></div>
     <div class="sb-item" data-view="p2" onclick="showView('p2')"><div class="n">PART 2</div><div class="t">문제 진단</div><div class="d">문제정의·분석목적·원인분석</div></div>
-    <div class="sb-item" data-view="p3" onclick="showView('p3')"><div class="n">PART 3</div><div class="t">검증 &amp; 액션<span class="nav-badge" id="nav-action-badge">3</span></div><div class="d">시뮬레이션·채널효율·액션플래너</div></div>
+    <div class="sb-item" data-view="p3" onclick="showView('p3')"><div class="n">PART 3</div><div class="t">검증 &amp; 액션</div><div class="d">시뮬레이션·채널효율·액션플래너</div></div>
     <div class="sb-item" data-view="dt" onclick="showView('dt')"><div class="n">DATA</div><div class="t">데이터 테이블</div><div class="d">주간 원본 수요·지출·채널 집계</div></div>
   </nav>
   <div class="sb-foot">
@@ -206,7 +212,8 @@ th .car{opacity:.5;margin-left:3px}
 <header class="top">
   <div class="eyebrow">Spigen · Global Performance Marketing · 신입 인턴 지원 포트폴리오</div>
   <h1>독일·이탈리아 시장 분석부터 원인 진단, 시뮬레이션 검증까지</h1>
-  <p class="lede">공개 데이터로 두 시장을 조사하고, 발견한 문제의 원인을 좁힌 뒤, 합성 데이터로 직접 검증한 전체 과정을 정리했습니다. 왼쪽 메뉴에서 파트를 전환하세요.</p>
+  <p class="lede"><span class="k-real">공개 데이터</span>로 두 시장을 조사하고, 발견한 문제의 원인을 좁힌&nbsp;뒤,<br class="br-d"> <span class="k-synth">합성 데이터</span>로 직접 검증한 전체 과정을 정리했습니다.</p>
+  <p class="hint"><span class="dir-l">←&nbsp;왼쪽</span><span class="dir-t">↑&nbsp;위쪽</span> 메뉴에서 파트를 전환하세요</p>
   <div class="meta">
     <span><i class="sw de"></i>독일 (DE)</span>
     <span><i class="sw it"></i>이탈리아 (IT)</span>
@@ -818,13 +825,7 @@ function renderActions(query){
   document.querySelectorAll('.status-pill').forEach(p=>p.addEventListener('click',()=>{
     const id=p.dataset.id; const cur=actionStatus[id]||'todo'; actionStatus[id]=statNext[cur];
     saveJSON('spigen-case-study-action-status',actionStatus); renderActions();
-    updateActionCount();
   }));
-}
-function updateActionCount(){
-  const open=ACTIONS.filter(r=>(actionStatus[r.id]||'todo')!=='done').length;
-  document.getElementById('nav-action-badge').textContent=open;
-  document.getElementById('nav-action-badge').style.display = open>0?'inline-flex':'none';
 }
 document.querySelectorAll('#action-table th[data-k]').forEach(th=>th.addEventListener('click',()=>{
   const k=th.dataset.k; sortDir = sortKey===k ? -sortDir : 1; sortKey=k; renderActions();
@@ -908,7 +909,6 @@ window.showView=function(id){
 };
 
 renderActions();
-updateActionCount();
 draw();
 })();
 </script>
